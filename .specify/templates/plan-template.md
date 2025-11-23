@@ -39,6 +39,8 @@
 - [ ] **Atomic Commits**: Commit strategy defined (one logical change per commit)
 - [ ] **Source-Build Separation**: Build outputs confined to `build/` directory, source in `src/`
 - [ ] **Submodule Versions**: External dependencies (gem5, Zephyr, NVMain) pinned to specific versions
+- [ ] **Build Script Standards**: Dedicated build scripts log to files, errors to stdout
+- [ ] **Linux Text Standards**: LF line endings, files end with newline, UTF-8 encoding
 
 ## Project Structure
 
