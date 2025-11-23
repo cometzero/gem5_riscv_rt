@@ -58,21 +58,21 @@ This is a single embedded system project with structure:
 
 **⚠️ CRITICAL**: No other milestones can proceed until gem5 is built
 
-- [ ] T011 Create scripts/build_gem5.sh with build command: scons build/RISCV/gem5.opt -j$(nproc)
-- [ ] T012 Add logging to build_gem5.sh: 2>&1 | tee ../../build/gem5/build.log
-- [ ] T013 Add error handling to build_gem5.sh: grep -i error on log, exit codes
+- [x] T011 Create scripts/build_gem5.sh with build command: scons build/RISCV/gem5.opt -j$(nproc)
+- [x] T012 Add logging to build_gem5.sh: 2>&1 | tee ../../build/gem5/build.log
+- [x] T013 Add error handling to build_gem5.sh: grep -i error on log, exit codes
 - [ ] T014 Execute build_gem5.sh and verify build/gem5/build/RISCV/gem5.opt exists
-- [ ] T015 Create configs/riscv_rt/ directory for configuration scripts
-- [ ] T016 Create configs/riscv_rt/base_fs.py with MinorCPU, 500MHz, RV32IMAC
-- [ ] T017 Add L1 caches to base_fs.py: L1ICache(32kB), L1DCache(32kB)
-- [ ] T018 Add L2 cache to base_fs.py: L2Cache(256kB unified)
-- [ ] T019 Add DRAM to base_fs.py: SimpleMemory(), AddrRange(128MB)
-- [ ] T020 [P] Add serial console device tree to base_fs.py
-- [ ] T021 Create workloads/bare_metal/ directory for test programs
-- [ ] T022 Write workloads/bare_metal/hello.c with UART "Hello from RISC-V" output
-- [ ] T023 Create workloads/bare_metal/Makefile for riscv32-unknown-elf-gcc compilation
+- [x] T015 Create configs/riscv_rt/ directory for configuration scripts
+- [x] T016 Create configs/riscv_rt/base_fs.py with MinorCPU, 500MHz, RV32IMAC
+- [x] T017 Add L1 caches to base_fs.py: L1ICache(32kB), L1DCache(32kB)
+- [x] T018 Add L2 cache to base_fs.py: L2Cache(256kB unified)
+- [x] T019 Add DRAM to base_fs.py: SimpleMemory(), AddrRange(128MB)
+- [x] T020 [P] Add serial console device tree to base_fs.py
+- [x] T021 Create workloads/bare_metal/ directory for test programs
+- [x] T022 Write workloads/bare_metal/hello.c with UART "Hello from RISC-V" output
+- [x] T023 Create workloads/bare_metal/Makefile for riscv32-unknown-elf-gcc compilation
 - [ ] T024 Compile bare-metal hello.c to ELF binary
-- [ ] T025 Create scripts/run_bare_metal.sh to run gem5 with hello.elf
+- [x] T025 Create scripts/run_bare_metal.sh to run gem5 with hello.elf
 - [ ] T026 Execute run_bare_metal.sh and verify "Hello from RISC-V" in terminal output
 - [ ] T027 Verify m5out/stats.txt contains system.cpu.ipc, icache.missRate, dcache.missRate
 - [ ] T028 Verify M2 completion: gem5 built, config matches baseline (500MHz, 32KB L1, 256KB L2), stats generated
