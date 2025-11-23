@@ -31,7 +31,14 @@
 
 *GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
 
-[Gates determined based on constitution file]
+- [ ] **Spec-Driven**: All requirements documented in spec before implementation begins
+- [ ] **Unambiguous**: Requirements use concrete numbers/conditions (no vague terms like "fast", "moderate")
+- [ ] **Testable**: Each requirement has defined verification method (test/measurement/simulation)
+- [ ] **Traceable**: Requirement IDs map to implementation files and test/simulation results
+- [ ] **Design First**: Correctness and reproducibility prioritized; optimization deferred to separate spec
+- [ ] **Atomic Commits**: Commit strategy defined (one logical change per commit)
+- [ ] **Source-Build Separation**: Build outputs confined to `build/` directory, source in `src/`
+- [ ] **Submodule Versions**: External dependencies (gem5, Zephyr, NVMain) pinned to specific versions
 
 ## Project Structure
 
