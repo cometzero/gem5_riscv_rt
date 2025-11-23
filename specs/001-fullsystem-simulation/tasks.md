@@ -35,16 +35,16 @@ This is a single embedded system project with structure:
 
 **Milestone**: M1 - Repository & Toolchain Skeleton Ready
 
-- [ ] T001 Create top-level directories: src/, configs/, workloads/, scripts/, docs/, build/
-- [ ] T002 Create .gitignore with build/, *.log, *.pyc, __pycache__, .vscode/, *.swp entries
-- [ ] T003 Create docs/ARCHITECTURE.md with system overview and baseline configuration diagram
-- [ ] T004 [P] Create scripts/check_env.sh to verify Python 3.11+, riscv32-unknown-elf-gcc, cmake, west
-- [ ] T005 [P] Document Ubuntu 24.04 package requirements in docs/ARCHITECTURE.md
-- [ ] T006 Add gem5 submodule: git submodule add https://github.com/gem5/gem5.git src/gem5
-- [ ] T007 Pin gem5 to stable tag: cd src/gem5 && git checkout <tag>
-- [ ] T008 Add Zephyr setup instructions to docs/EXTERNALS.md (west init, etc.)
-- [ ] T009 [P] Create docs/EXTERNALS.md documenting gem5, Zephyr, licenses, pinned versions
-- [ ] T010 Verify M1 completion: tree -L 2, scripts/check_env.sh passes, git submodule status
+- [x] T001 Create top-level directories: src/, configs/, workloads/, scripts/, docs/, build/
+- [x] T002 Create .gitignore with build/, *.log, *.pyc, __pycache__, .vscode/, *.swp entries
+- [x] T003 Create docs/ARCHITECTURE.md with system overview and baseline configuration diagram
+- [x] T004 [P] Create scripts/check_env.sh to verify Python 3.11+, riscv32-unknown-elf-gcc, cmake, west
+- [x] T005 [P] Document Ubuntu 24.04 package requirements in docs/ARCHITECTURE.md
+- [x] T006 Add gem5 submodule: git submodule add https://github.com/gem5/gem5.git src/gem5
+- [x] T007 Pin gem5 to stable tag: cd src/gem5 && git checkout <tag>
+- [x] T008 Add Zephyr setup instructions to docs/EXTERNALS.md (west init, etc.)
+- [x] T009 [P] Create docs/EXTERNALS.md documenting gem5, Zephyr, licenses, pinned versions
+- [x] T010 Verify M1 completion: tree -L 2, scripts/check_env.sh passes, git submodule status
 
 **Checkpoint**: Repository structure ready, tools verified, submodules pinned
 

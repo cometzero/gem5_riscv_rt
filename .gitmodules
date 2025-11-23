@@ -1,0 +1,3 @@
+[submodule "src/gem5"]
+	path = src/gem5
+	url = https://github.com/gem5/gem5.git
