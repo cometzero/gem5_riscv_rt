@@ -5,6 +5,16 @@
 **Status**: Draft  
 **Input**: User description: "gem5를 활용하여 RISC-V 32-bit in-order CPU + 캐시/메모리 계층 + NOR Flash를 포함한 full-system 시뮬레이션을 수행하고, Zephyr RTOS 기반의 automotive workload를 구동하여 설계 공간 탐색(DSE)을 수행한다."
 
+## Clarifications
+
+### Session 2025-11-23
+
+- Q: What should be the baseline CPU frequency for the RISC-V 32-bit in-order CPU? → A: 500 MHz
+- Q: What should be the baseline cache sizes for L1 instruction, L1 data, and L2 unified caches? → A: L1-I: 32KB, L1-D: 32KB, L2: 256KB
+- Q: What should be the period and deadline for the baseline automotive periodic control loop workload? → A: Period: 1ms, Deadline: 1ms
+- Q: What should be the baseline main memory (DRAM) size for the system? → A: 128 MB
+- Q: What should be the TCM (Tightly Coupled Memory) size for the baseline configuration when TCM is enabled? → A: 32 KB
+
 ## User Scenarios & Testing *(mandatory)*
 
 ### User Story 1 - Baseline Full-System Simulation (Priority: P1)
@@ -113,23 +123,23 @@ As a hardware architect, I need to run automotive-representative workloads (peri
 
 #### CPU & ISA (CPU-*)
 
-- **CPU-001**: gem5 configuration MUST use RV32 in-order CPU model with documented pipeline parameters
+- **CPU-001**: gem5 configuration MUST use RV32 in-order CPU model with documented pipeline parameters; baseline frequency is 500 MHz
 - **CPU-002**: CPU configuration MUST document branch predictor type, pipeline depth, and issue width
 - **CPU-003**: System MUST define at least one baseline CPU configuration and one variant configuration (e.g., different branch predictor)
 - **CPU-004**: CPU parameters MUST be configurable via script arguments or configuration files (not hardcoded)
 
 #### Cache & TCM (CACHE-*, TCM-*)
 
-- **CACHE-001**: L1/L2 cache parameters (size, associativity, line size, write policy) MUST be configurable via script parameters
+- **CACHE-001**: L1/L2 cache parameters (size, associativity, line size, write policy) MUST be configurable via script parameters; baseline: L1-I 32KB, L1-D 32KB, L2 256KB
 - **CACHE-002**: System MUST collect cache statistics including miss rate, hit rate, and average access latency
 - **CACHE-003**: Cache configurations MUST support parameter sweeps (e.g., L1 size: 16KB, 32KB, 64KB) via automated scripts
-- **TCM-001**: System MUST support optional TCM/TIM configuration with configurable size and address mapping
+- **TCM-001**: System MUST support optional TCM/TIM configuration with configurable size and address mapping; baseline TCM size is 32 KB
 - **TCM-002**: System MUST allow comparison between TCM-enabled and TCM-disabled configurations using the same workload
 - **TCM-003**: TCM configuration MUST document code/data section mapping strategy
 
 #### Memory & Storage (MEM-*, FLASH-*)
 
-- **MEM-001**: System MUST support three memory configurations: DRAM-only, STT-MRAM-only, and hybrid DRAM+STT-MRAM
+- **MEM-001**: System MUST support three memory configurations: DRAM-only, STT-MRAM-only, and hybrid DRAM+STT-MRAM; baseline DRAM capacity is 128 MB
 - **MEM-002**: Memory configuration MUST be selectable via script parameter
 - **MEM-003**: System MUST collect memory access latency statistics (average, maximum, distribution)
 - **MEM-004**: STT-MRAM simulation MUST use NVMain or equivalent memory model with documented latency/energy parameters
@@ -141,7 +151,7 @@ As a hardware architect, I need to run automotive-representative workloads (peri
 - **SW-001**: Zephyr RTOS MUST be buildable for RISC-V 32-bit target compatible with gem5 simulation
 - **SW-002**: System MUST include at least one automotive workload (periodic control loop with interrupt handling)
 - **SW-003**: System MUST include at least one microbenchmark (CoreMark or similar) for baseline performance measurement
-- **SW-004**: Each workload MUST document real-time properties: period, deadline, priority
+- **SW-004**: Each workload MUST document real-time properties: period, deadline, priority; baseline automotive workload has period=1ms, deadline=1ms
 - **SW-005**: Workload selection MUST be configurable via script parameter
 
 #### Experiment & Metrics (EXP-*)
