@@ -1,14 +1,16 @@
 <!--
 Sync Impact Report:
-- Version: 0.0.0 → 1.0.0
-- Change Type: Initial constitution creation (MAJOR version)
-- Modified Principles: N/A (initial creation)
-- Added Sections: All core principles, Development Workflow, Repository & Build Layout, External Code & Licensing, Quality & Testing, Documentation, Governance
+- Version: 1.0.0 → 1.1.0
+- Change Type: MINOR version (new principles added)
+- Modified Principles: None
+- Added Sections:
+  - Principle VI: Build Script Standards (logging and error handling)
+  - Principle VII: Linux Text File Standards (line endings and file termination)
 - Removed Sections: None
 - Templates Requiring Updates:
-  ✅ plan-template.md - Constitution Check section aligns with principles
-  ✅ spec-template.md - Requirements structure supports spec-driven development
-  ✅ tasks-template.md - Task organization supports atomic commits and testing
+  ✅ plan-template.md - Constitution Check section already complete
+  ✅ spec-template.md - No changes needed
+  ✅ tasks-template.md - No changes needed
 - Follow-up TODOs: None
 -->
 
@@ -54,6 +56,25 @@ Source code and build artifacts MUST be strictly separated:
 - **External**: Manage via Git submodules with pinned versions
 
 **Rationale**: Prevents build pollution of source tree, enables reproducible builds, and simplifies cleanup.
+
+### VI. Build Script Standards
+
+All component builds MUST use dedicated build scripts with structured logging:
+- **Build Scripts**: Each component (gem5, Zephyr, NVMain) MUST have a dedicated build script in `scripts/`
+- **Logging**: Build output MUST be logged to files (e.g., `build/gem5/build.log`)
+- **Error Handling**: Only errors MUST be printed to stdout; full logs remain in log files
+- **Exit Codes**: Build scripts MUST return non-zero exit codes on failure
+
+**Rationale**: Structured logging enables debugging without cluttering terminal output. Log files provide complete build history for troubleshooting.
+
+### VII. Linux Text File Standards
+
+All text files MUST follow Linux conventions:
+- **Line Endings**: Use LF (Line Feed, `\n`) only, not CRLF (Windows-style)
+- **File Termination**: All text files MUST end with a newline character
+- **Encoding**: Use UTF-8 encoding without BOM
+
+**Rationale**: Ensures compatibility with Linux development tools, prevents git diff noise from line ending changes, and follows POSIX standards.
 
 ## Development Workflow
 
@@ -164,4 +185,4 @@ This constitution supersedes all other development practices. Amendments require
 
 All pull requests and code reviews MUST verify compliance with this constitution. Complexity that violates principles MUST be justified in writing.
 
-**Version**: 1.0.0 | **Ratified**: 2025-11-23 | **Last Amended**: 2025-11-23
+**Version**: 1.1.0 | **Ratified**: 2025-11-23 | **Last Amended**: 2025-11-23
