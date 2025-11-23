@@ -1,50 +1,167 @@
-# [PROJECT_NAME] Constitution
-<!-- Example: Spec Constitution, TaskFlow Constitution, etc. -->
+<!--
+Sync Impact Report:
+- Version: 0.0.0 → 1.0.0
+- Change Type: Initial constitution creation (MAJOR version)
+- Modified Principles: N/A (initial creation)
+- Added Sections: All core principles, Development Workflow, Repository & Build Layout, External Code & Licensing, Quality & Testing, Documentation, Governance
+- Removed Sections: None
+- Templates Requiring Updates:
+  ✅ plan-template.md - Constitution Check section aligns with principles
+  ✅ spec-template.md - Requirements structure supports spec-driven development
+  ✅ tasks-template.md - Task organization supports atomic commits and testing
+- Follow-up TODOs: None
+-->
+
+# gem5_riscv_rt Constitution
 
 ## Core Principles
 
-### [PRINCIPLE_1_NAME]
-<!-- Example: I. Library-First -->
-[PRINCIPLE_1_DESCRIPTION]
-<!-- Example: Every feature starts as a standalone library; Libraries must be self-contained, independently testable, documented; Clear purpose required - no organizational-only libraries -->
+### I. Spec-Driven Development (NON-NEGOTIABLE)
 
-### [PRINCIPLE_2_NAME]
-<!-- Example: II. CLI Interface -->
-[PRINCIPLE_2_DESCRIPTION]
-<!-- Example: Every library exposes functionality via CLI; Text in/out protocol: stdin/args → stdout, errors → stderr; Support JSON + human-readable formats -->
+All work starts from specifications. Feature/requirement/architecture changes MUST be reflected in spec documents before implementation. Implementation commits MUST reference the spec item being satisfied.
 
-### [PRINCIPLE_3_NAME]
-<!-- Example: III. Test-First (NON-NEGOTIABLE) -->
-[PRINCIPLE_3_DESCRIPTION]
-<!-- Example: TDD mandatory: Tests written → User approved → Tests fail → Then implement; Red-Green-Refactor cycle strictly enforced -->
+**Rationale**: Ensures traceability from requirements to implementation to verification, preventing scope creep and enabling reproducible research.
 
-### [PRINCIPLE_4_NAME]
-<!-- Example: IV. Integration Testing -->
-[PRINCIPLE_4_DESCRIPTION]
-<!-- Example: Focus areas requiring integration tests: New library contract tests, Contract changes, Inter-service communication, Shared schemas -->
+### II. Unambiguous Specifications
 
-### [PRINCIPLE_5_NAME]
-<!-- Example: V. Observability, VI. Versioning & Breaking Changes, VII. Simplicity -->
-[PRINCIPLE_5_DESCRIPTION]
-<!-- Example: Text I/O ensures debuggability; Structured logging required; Or: MAJOR.MINOR.BUILD format; Or: Start simple, YAGNI principles -->
+Specifications MUST be unambiguous, testable, and traceable:
+- **Unambiguous**: Avoid vague expressions (e.g., "fast", "moderate", "as much as possible"). Use concrete numbers and conditions.
+- **Testable**: Each requirement MUST be verifiable through testing, measurement, or simulation.
+- **Traceable**: Requirement IDs ↔ implementation code/scripts ↔ experimental results (reports) MUST be linkable.
 
-## [SECTION_2_NAME]
-<!-- Example: Additional Constraints, Security Requirements, Performance Standards, etc. -->
+**Rationale**: Enables objective verification and reproducibility of simulation experiments, critical for design-space exploration.
 
-[SECTION_2_CONTENT]
-<!-- Example: Technology stack requirements, compliance standards, deployment policies, etc. -->
+### III. Design First, Optimization Later
 
-## [SECTION_3_NAME]
-<!-- Example: Development Workflow, Review Process, Quality Gates, etc. -->
+Initial development prioritizes correctness and reproducibility over performance. Performance optimization is addressed only after baseline stabilization and MUST be managed through separate "Optimization specs."
 
-[SECTION_3_CONTENT]
-<!-- Example: Code review requirements, testing gates, deployment approval process, etc. -->
+**Rationale**: Premature optimization introduces complexity that obscures correctness issues. Stable baselines enable meaningful performance comparisons.
+
+### IV. Atomic Commits
+
+Git commits MUST be atomic, containing one logical change. Follow Linux/gem5 commit style:
+- **Summary**: ~50 characters, imperative mood
+- **Body**: 72-character wrapping, explains what and why (not how)
+- **Reference**: Link to spec item or issue when applicable
+
+**Rationale**: Atomic commits enable clean history, easy bisection, and clear code review.
+
+### V. Source-Build Separation
+
+Source code and build artifacts MUST be strictly separated:
+- **Source**: `src/`, `configs/`, `workloads/`, `docs/`, `.specify/`
+- **Build**: All build outputs under `build/` directory
+- **External**: Manage via Git submodules with pinned versions
+
+**Rationale**: Prevents build pollution of source tree, enables reproducible builds, and simplifies cleanup.
+
+## Development Workflow
+
+### Unit of Work
+
+For each new feature or change:
+1. Update relevant requirement/spec documents
+2. Implement code/scripts/configuration
+3. Execute minimum test/simulation
+4. Summarize results and commit
+
+### Branching & Review
+
+- `main` branch MUST always be buildable and pass basic simulations
+- Use feature branches for functionality/experiments
+- Merge to main only after review (self-review with checklist is acceptable)
+- Review checklist MUST verify spec alignment and test coverage
+
+### Commit Standards
+
+Follow open-source conventions (Linux/gem5 style):
+- Commits are atomic (one logical change)
+- Summary line: 50 characters, imperative mood
+- Body: 72-character wrapping, explains context and rationale
+- Reference spec IDs or issue numbers
+
+## Repository & Build Layout
+
+### Top-Level Structure
+
+```
+gem5_riscv_rt/
+├── src/                  # Source code (read-only during builds)
+│   ├── gem5/            # gem5 submodule
+│   ├── zephyr/          # Zephyr RTOS submodule
+│   └── nvmain/          # (Optional) NVMain submodule
+├── configs/             # gem5 RISC-V full-system configs
+├── workloads/           # Automotive workload definitions
+├── scripts/             # Build/run/analysis automation
+├── docs/                # Specs, experiment plans, DSE reports
+├── build/               # All build outputs
+│   ├── gem5/
+│   ├── zephyr/
+│   └── nvmain/
+└── .specify/            # Specification framework
+```
+
+### Build Rules
+
+- All builds execute in `build/` subdirectories
+- Source directories (`src/`) treated as read-only
+- Build/execution scripts in `scripts/` for reproducibility
+- Submodule versions (tag/commit) MUST be documented in CHANGELOG and specs
+
+## External Code & Licensing
+
+### External Components
+
+- gem5, Zephyr RTOS, NVMain, benchmarks: Respect each project's license
+- Submodules MUST specify version (tag/commit)
+- Version changes MUST be recorded in CHANGELOG and specs
+
+### License Compliance
+
+- Prevent license violations when mixing closed-source code with copyleft licenses (e.g., GPL)
+- Maintain SBOM and license information in `docs/license/`
+- Use automated scripts for license tracking
+
+## Quality & Testing
+
+### Minimum Quality Standards
+
+- All major simulation configurations MUST execute successfully with example inputs
+- "Basic scenarios" defined in specs MUST have automated execution scripts
+
+### Test Types
+
+- **Smoke Test**: Verify build and full simulation complete successfully at least once
+- **Regression Test**: Core configurations maintain statistics (IPC, miss rate, etc.) within tolerance
+- **Consistency Check**: Verify config/scripts match documentation for same spec ID
+
+## Documentation
+
+### Documentation Requirements
+
+All major decisions (architecture choices, cache/memory configurations, workload selection criteria) MUST be documented.
+
+### Documentation Structure
+
+Follow this format:
+1. Problem definition
+2. Assumptions
+3. Alternatives considered
+4. Selected option
+5. Rationale
+6. TODO items
+
+### Traceability
+
+Specs, design documents, and experimental results MUST be cross-linked to maintain traceability.
 
 ## Governance
-<!-- Example: Constitution supersedes all other practices; Amendments require documentation, approval, migration plan -->
 
-[GOVERNANCE_RULES]
-<!-- Example: All PRs/reviews must verify compliance; Complexity must be justified; Use [GUIDANCE_FILE] for runtime development guidance -->
+This constitution supersedes all other development practices. Amendments require:
+1. Documentation of proposed changes
+2. Review and approval
+3. Migration plan for affected code/specs
 
-**Version**: [CONSTITUTION_VERSION] | **Ratified**: [RATIFICATION_DATE] | **Last Amended**: [LAST_AMENDED_DATE]
-<!-- Example: Version: 2.1.1 | Ratified: 2025-06-13 | Last Amended: 2025-07-16 -->
+All pull requests and code reviews MUST verify compliance with this constitution. Complexity that violates principles MUST be justified in writing.
+
+**Version**: 1.0.0 | **Ratified**: 2025-11-23 | **Last Amended**: 2025-11-23
