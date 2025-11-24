@@ -61,7 +61,7 @@ This is a single embedded system project with structure:
 - [x] T011 Create scripts/build_gem5.sh with build command: scons build/RISCV/gem5.opt -j$(nproc)
 - [x] T012 Add logging to build_gem5.sh: 2>&1 | tee ../../build/gem5/build.log
 - [x] T013 Add error handling to build_gem5.sh: grep -i error on log, exit codes
-- [ ] T014 Execute build_gem5.sh and verify build/gem5/build/RISCV/gem5.opt exists
+- [x] T014 Execute build_gem5.sh and verify build/gem5/build/RISCV/gem5.opt exists
 - [x] T015 Create configs/riscv_rt/ directory for configuration scripts
 - [x] T016 Create configs/riscv_rt/base_fs.py with MinorCPU, 500MHz, RV32IMAC
 - [x] T017 Add L1 caches to base_fs.py: L1ICache(32kB), L1DCache(32kB)
@@ -71,11 +71,11 @@ This is a single embedded system project with structure:
 - [x] T021 Create workloads/bare_metal/ directory for test programs
 - [x] T022 Write workloads/bare_metal/hello.c with UART "Hello from RISC-V" output
 - [x] T023 Create workloads/bare_metal/Makefile for riscv32-unknown-elf-gcc compilation
-- [ ] T024 Compile bare-metal hello.c to ELF binary
+- [x] T024 Compile bare-metal hello.c to ELF binary
 - [x] T025 Create scripts/run_bare_metal.sh to run gem5 with hello.elf
-- [ ] T026 Execute run_bare_metal.sh and verify "Hello from RISC-V" in terminal output
-- [ ] T027 Verify m5out/stats.txt contains system.cpu.ipc, icache.missRate, dcache.missRate
-- [ ] T028 Verify M2 completion: gem5 built, config matches baseline (500MHz, 32KB L1, 256KB L2), stats generated
+- [x] T026 Execute run_bare_metal.sh and verify "Hello from RISC-V" in terminal output
+- [x] T027 Verify m5out/stats.txt contains system.cpu.ipc, icache.missRate, dcache.missRate
+- [x] T028 Verify M2 completion: gem5 built, config matches baseline (500MHz, 32KB L1, 256KB L2), stats generated
 
 **Checkpoint**: gem5 builds successfully, baseline configuration validated, simple program executes
 
