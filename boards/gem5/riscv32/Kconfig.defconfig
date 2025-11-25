@@ -1,0 +1,12 @@
+# Copyright (c) 2024 gem5 RISC-V RT Project
+# SPDX-License-Identifier: Apache-2.0
+
+if BOARD_GEM5_RISCV32
+
+config BOARD
+	default "gem5_riscv32"
+
+config BUILD_OUTPUT_BIN
+	default n
+
+endif # BOARD_GEM5_RISCV32

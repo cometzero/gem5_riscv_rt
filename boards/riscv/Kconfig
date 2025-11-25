@@ -1,0 +1,3 @@
+# RISC-V boards for gem5 simulation
+
+rsource "*/Kconfig.board"

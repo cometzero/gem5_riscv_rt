@@ -1,0 +1,4 @@
+# Custom boards for gem5 RISC-V simulation
+# Vendor-based structure for Zephyr 4.x
+
+rsource "gem5/Kconfig"

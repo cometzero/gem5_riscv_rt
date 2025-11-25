@@ -1,0 +1,4 @@
+# Copyright (c) 2024 gem5 RISC-V RT Project
+# SPDX-License-Identifier: Apache-2.0
+
+rsource "*/Kconfig.$(BOARD)"

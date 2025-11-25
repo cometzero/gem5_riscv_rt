@@ -1,0 +1,7 @@
+config BOARD_GEM5_RISCV32
+	bool "gem5 RISC-V 32-bit"
+	depends on SOC_RISCV_VIRT
+	select RISCV_ISA_RV32I
+	select RISCV_ISA_EXT_M
+	select RISCV_ISA_EXT_A
+	select RISCV_ISA_EXT_C

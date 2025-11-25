@@ -174,12 +174,21 @@ def main():
     # Create system
     system = create_system()
     
-    # Set workload with boot ROM
-    # Boot ROM at 0x0 jumps to kernel at 0x80000000
+    # Set workload
+    # For bare-metal with bootloader: boot ROM at 0x0 jumps to kernel at 0x80000000
+    # For Zephyr: boot directly to kernel at 0x80000000
     system.workload = RiscvBareMetal()
-    system.workload.bootloader = str(Path(args.kernel).parent / "boot.elf")
-    system.workload.auto_reset_vect = False
-    system.workload.reset_vect = 0x0  # Start at boot ROM
+    
+    bootloader_path = Path(args.kernel).parent / "boot.elf"
+    if bootloader_path.exists():
+        # Bare-metal mode with bootloader
+        system.workload.bootloader = str(bootloader_path)
+        system.workload.auto_reset_vect = False
+        system.workload.reset_vect = 0x0  # Start at boot ROM
+    else:
+        # Zephyr mode - boot directly to kernel
+        system.workload.bootloader = args.kernel
+        system.workload.auto_reset_vect = True  # Use entry point from ELF
     
     # Create root object
     root = Root(full_system=True, system=system)

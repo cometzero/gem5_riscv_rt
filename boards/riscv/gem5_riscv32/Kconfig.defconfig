@@ -1,0 +1,9 @@
+if BOARD_GEM5_RISCV32
+
+config BOARD
+	default "gem5_riscv32"
+
+config SYS_CLOCK_HW_CYCLES_PER_SEC
+	default 10000000
+
+endif # BOARD_GEM5_RISCV32

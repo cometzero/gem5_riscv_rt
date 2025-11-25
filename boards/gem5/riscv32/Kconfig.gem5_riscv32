@@ -1,0 +1,6 @@
+# Copyright (c) 2024 gem5 RISC-V RT Project
+# SPDX-License-Identifier: Apache-2.0
+
+config BOARD_GEM5_RISCV32
+	bool "gem5 RISC-V 32-bit"
+	select SOC_QEMU_VIRT_RISCV32

@@ -87,28 +87,28 @@ This is a single embedded system project with structure:
 
 **Independent Test**: Zephyr boots and prints "*** Booting Zephyr OS" banner in gem5 simulation
 
-- [ ] T029 Install Zephyr SDK: download and extract to ~/zephyr-sdk
-- [ ] T030 Install west tool: pip3 install west
-- [ ] T031 Initialize Zephyr workspace: west init src/zephyr
-- [ ] T032 Update Zephyr modules: cd src/zephyr && west update
-- [ ] T033 Create scripts/build_zephyr.sh for west build command
-- [ ] T034 Add logging to build_zephyr.sh: 2>&1 | tee ../../build/zephyr/build.log
-- [ ] T035 Test Zephyr build for QEMU: west build -b qemu_riscv32 samples/hello_world
-- [ ] T036 Verify QEMU run succeeds: west build -t run (in terminal, not gem5 yet)
-- [ ] T037 Create custom board definition src/zephyr/boards/riscv/gem5_riscv32/ (or adapt existing)
-- [ ] T038 Configure gem5_riscv32 memory map: start=0x80000000, size=128MB in DTS
-- [ ] T039 Configure gem5_riscv32 UART address to match gem5 device tree
-- [ ] T040 Create gem5_riscv32.dts device tree file with CPU, memory, UART nodes
-- [ ] T041 Create gem5_riscv32_defconfig Kconfig file for board
-- [ ] T042 Build Zephyr for gem5 target: west build -b gem5_riscv32 samples/hello_world
-- [ ] T043 Verify Zephyr ELF has correct load addresses: readelf -l build/zephyr/zephyr.elf
-- [ ] T044 Update configs/riscv_rt/base_fs.py to load Zephyr kernel at correct address
-- [ ] T045 Create scripts/run_zephyr.sh to run gem5 with --kernel=zephyr.elf
-- [ ] T046 Execute run_zephyr.sh and capture serial console output
-- [ ] T047 Verify "*** Booting Zephyr OS" appears in terminal output
-- [ ] T048 Verify Zephyr shell prompt (if enabled) or hello_world message appears
-- [ ] T049 Verify gem5 stats include boot phase metrics (IPC, cache activity)
-- [ ] T050 Verify M3 completion: Zephyr boots on gem5, boot log saved, stats collected
+- [x] T029 Install Zephyr SDK: download and extract to ~/zephyr-sdk
+- [x] T030 Install west tool: pip3 install west
+- [x] T031 Initialize Zephyr workspace: west init src/zephyr
+- [x] T032 Update Zephyr modules: cd src/zephyr && west update
+- [x] T033 Create scripts/build_zephyr.sh for west build command
+- [x] T034 Add logging to build_zephyr.sh: 2>&1 | tee ../../build/zephyr/build.log
+- [x] T035 Test Zephyr build for QEMU: west build -b qemu_riscv32 samples/hello_world
+- [x] T036 Verify QEMU run succeeds: west build -t run (in terminal, not gem5 yet)
+- [x] T037 Create custom board definition boards/gem5/riscv32/ (Zephyr 4.x vendor/board structure)
+- [x] T038 Configure gem5_riscv32 memory map: start=0x80000000, size=128MB in DTS
+- [x] T039 Configure gem5_riscv32 UART address to match gem5 device tree
+- [x] T040 Create gem5_riscv32.dts device tree file with CPU, memory, UART nodes
+- [x] T041 Create gem5_riscv32_defconfig Kconfig file for board
+- [x] T042 Build Zephyr for gem5 target: west build -b gem5_riscv32 samples/hello_world
+- [x] T043 Verify Zephyr ELF has correct load addresses: readelf -l build/zephyr/zephyr.elf
+- [x] T044 Update configs/riscv_rt/base_fs.py to load Zephyr kernel at correct address
+- [x] T045 Create scripts/run_zephyr.sh to run gem5 with --kernel=zephyr.elf
+- [x] T046 Execute run_zephyr.sh and capture serial console output
+- [x] T047 Verify "*** Booting Zephyr OS" appears in terminal output
+- [x] T048 Verify Zephyr shell prompt (if enabled) or hello_world message appears
+- [x] T049 Verify gem5 stats include boot phase metrics (IPC, cache activity)
+- [x] T050 Verify M3 completion: Zephyr boots on gem5, boot log saved, stats collected
 
 **Checkpoint**: Zephyr builds for gem5 target, boots successfully, verified via serial output
 
