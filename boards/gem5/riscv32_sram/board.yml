@@ -1,0 +1,6 @@
+board:
+  name: gem5_riscv32_sram
+  full_name: gem5 RISC-V 32-bit SRAM
+  vendor: gem5
+  socs:
+    - name: qemu_virt_riscv32

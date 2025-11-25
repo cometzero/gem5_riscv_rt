@@ -1,0 +1,12 @@
+identifier: gem5_riscv32_sram
+name: gem5 RISC-V 32-bit SRAM
+type: mcu
+arch: riscv
+ram: 128
+flash: 0
+toolchain:
+  - zephyr
+  - cross-compile
+supported:
+  - uart
+  - interrupt_controller

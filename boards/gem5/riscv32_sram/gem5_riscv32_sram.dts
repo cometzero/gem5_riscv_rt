@@ -1,0 +1,45 @@
+/* SPDX-License-Identifier: Apache-2.0 */
+
+/dts-v1/;
+
+#include <qemu/virt-riscv32.dtsi>
+
+/ {
+	model = "gem5 RISC-V 32-bit";
+	compatible = "gem5,riscv32";
+
+	chosen {
+		zephyr,console = &uart0;
+		zephyr,shell-uart = &uart0;
+		zephyr,sram = &dram0;
+		zephyr,flash = &ram0;
+	};
+
+	/* Add DRAM at 0x80200000 */
+	dram0: memory@80200000 {
+		device_type = "memory";
+		reg = <0x80200000 0x7E00000>; /* 126MB DRAM */
+	};
+
+	flash0: flash@20000000 {
+		device_type = "soc-nv-flash";
+		reg = <0x20000000 0x2000000>; /* 32MB Flash */
+	};
+
+	cpus {
+		cpu@0 {
+			riscv,isa = "rv32imac";
+		};
+	};
+};
+
+
+
+&uart0 {
+	status = "okay";
+};
+
+/* Resize default RAM to 2MB (SRAM) */
+&ram0 {
+reg = <0x80000000 0x200000>;
+};
