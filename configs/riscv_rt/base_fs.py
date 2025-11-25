@@ -21,10 +21,13 @@ from m5.util import addToPath
 
 # Add gem5 configs to path
 addToPath("../../src/gem5/configs")
+# Add project root to path for local configs
+addToPath("../../")
 
 from common import Options
 from common import Simulation
 from common.Caches import *
+from ruby import Ruby
 
 class L1ICache(Cache):
     """L1 Instruction Cache - 32 KB"""
@@ -56,7 +59,9 @@ class L2Cache(Cache):
     mshrs = 20
     tgts_per_mshr = 12
 
-def create_system():
+from configs.riscv_rt import memory
+
+def create_system(args):
     """Create the full-system configuration"""
     
     # Create base system
@@ -68,43 +73,70 @@ def create_system():
     system.clk_domain.voltage_domain = VoltageDomain()
     
     # Memory configuration
-    # Boot ROM at 0x0 (64 KB) - contains bootloader
-    # DRAM at 0x80000000 (128 MB) - contains main program
+    # Handled by memory.py
     system.mem_mode = "timing"
-    system.mem_ranges = [
-        AddrRange(start=0x0, size="64kB"),           # Boot ROM
-        AddrRange(start=0x80000000, size="128MB")     # DRAM
-    ]
     
-    # Create RISC-V 32-bit in-order CPU
-    system.cpu = MinorCPU()
+    # Memory configuration
+    system.mem_mode = "timing"
+
+    # Create RISC-V 32-bit CPU
+    # Use TimingSimpleCPU for Ruby compatibility/debugging
+    system.cpu = TimingSimpleCPU()
     system.cpu.clk_domain = system.clk_domain
     
-    # Create L1 caches
-    system.cpu.icache = L1ICache()
-    system.cpu.dcache = L1DCache()
-    
-    # Connect L1 caches to CPU
-    system.cpu.icache.cpu_side = system.cpu.icache_port
-    system.cpu.dcache.cpu_side = system.cpu.dcache_port
-    
-    # Create L2 cache bus
-    system.l2bus = L2XBar()
-    
-    # Connect L1 caches to L2 bus
-    system.cpu.icache.mem_side = system.l2bus.cpu_side_ports
-    system.cpu.dcache.mem_side = system.l2bus.cpu_side_ports
-    
-    # Create L2 cache
-    system.l2cache = L2Cache()
-    system.l2cache.cpu_side = system.l2bus.mem_side_ports
-    
-    # Create memory bus and IO bus
-    system.membus = SystemXBar()
-    system.iobus = IOXBar()
-    
-    # Connect L2 cache to memory bus
-    system.l2cache.mem_side = system.membus.cpu_side_ports
+    if args.mem_system == "classic":
+        # Create memory bus and IO bus
+        system.membus = SystemXBar()
+        system.iobus = IOXBar()
+        
+        # Setup memory objects
+        system = memory.create_memory_system(system, system.membus, args.mem_tech)
+        
+        # Create L1 caches
+        system.cpu.icache = L1ICache()
+        system.cpu.dcache = L1DCache()
+        
+        # Connect L1 caches to CPU
+        system.cpu.icache.cpu_side = system.cpu.icache_port
+        system.cpu.dcache.cpu_side = system.cpu.dcache_port
+        
+        # Create L2 cache bus
+        system.l2bus = L2XBar()
+        
+        # Connect L1 caches to L2 bus
+        system.cpu.icache.mem_side = system.l2bus.cpu_side_ports
+        system.cpu.dcache.mem_side = system.l2bus.cpu_side_ports
+        
+        # Create L2 cache
+        system.l2cache = L2Cache()
+        system.l2cache.cpu_side = system.l2bus.mem_side_ports
+        
+        # Connect L2 cache to memory bus
+        system.l2cache.mem_side = system.membus.cpu_side_ports
+        
+    else:
+        # Ruby System
+        from configs.riscv_rt.ruby import system as ruby_system
+        
+        # Define ranges manually for Ruby (must match memory.py logic)
+        system.mem_ranges = [
+            AddrRange(0x0, size="64kB"),           # Boot ROM
+            AddrRange(0x20000000, size="32MB"),    # Flash
+            AddrRange(0x80000000, size="2MB"),     # SRAM
+            AddrRange(0x80200000, size="126MB")    # DRAM
+        ]
+        
+        # Create IO Bus
+        system.iobus = IOXBar()
+        
+        # Create Ruby System
+        ruby_system.create_ruby_system(system, args, system.mem_ranges)
+        
+        # Connect CPU to Ruby Sequencer
+        # Assuming 1 CPU, 1 Sequencer
+        # Connect both I and D ports to the same sequencer port
+        system.cpu.icache_port = system.ruby._cpu_ports[0].slave
+        system.cpu.dcache_port = system.ruby._cpu_ports[0].slave
     
     # Create interrupt controller
     system.cpu.createInterruptController()
@@ -125,15 +157,31 @@ def create_system():
     # Connect platform PCI to IO bus
     system.platform.pci_host.pio = system.iobus.mem_side_ports
     
-    # Create bridge between memory bus and IO bus
-    system.bridge = Bridge(delay="50ns")
-    system.bridge.mem_side_port = system.iobus.cpu_side_ports
-    system.bridge.cpu_side_port = system.membus.mem_side_ports
-    system.bridge.ranges = system.platform._off_chip_ranges()
-    
-    # Attach platform devices
-    system.platform.attachOnChipIO(system.membus)
-    system.platform.attachOffChipIO(system.iobus)
+    # Create bridge between memory bus and IO bus (Classic only)
+    if args.mem_system == "classic":
+        system.bridge = Bridge(delay="50ns")
+        system.bridge.mem_side_port = system.iobus.cpu_side_ports
+        system.bridge.cpu_side_port = system.membus.mem_side_ports
+        system.bridge.ranges = system.platform._off_chip_ranges()
+        
+        # Attach platform devices
+        system.platform.attachOnChipIO(system.membus)
+        system.platform.attachOffChipIO(system.iobus)
+        
+        # Create system port for functional access
+        system.system_port = system.membus.cpu_side_ports
+        
+    else:
+        # Ruby IO Configuration
+        # system.system_port is connected by Ruby.create_system
+        
+        # Attach platform devices to IO bus (since we don't have membus)
+        system.platform.attachOnChipIO(system.iobus)
+        system.platform.attachOffChipIO(system.iobus)
+        
+        # IO bus to Ruby connection is handled by passing dma_ports to Ruby.create_system
+
+    # Common Platform Setup
     system.platform.attachPlic()
     system.platform.setNumCores(1)
     
@@ -144,35 +192,34 @@ def create_system():
     ]
     system.cpu.mmu.pma_checker = PMAChecker(uncacheable=uncacheable_range)
     
-    # Create boot ROM controller (read-only memory at 0x0)
-    system.boot_rom = SimpleMemory()
-    system.boot_rom.range = system.mem_ranges[0]  # 0x0 - 0x10000
-    system.boot_rom.port = system.membus.mem_side_ports
-    
-    # Create DRAM controller  
-    system.mem_ctrl = MemCtrl()
-    system.mem_ctrl.dram = DDR3_1600_8x8()
-    system.mem_ctrl.dram.range = system.mem_ranges[1]  # 0x80000000 - 0x88000000
-    system.mem_ctrl.port = system.membus.mem_side_ports
-    
-    # Create system port for functional access
-    system.system_port = system.membus.cpu_side_ports
-    
     return system
 
 def main():
     """Main function to run the simulation"""
     
     parser = argparse.ArgumentParser(description="gem5 RISC-V 32-bit Full-System Baseline")
+    
+    # Add common options
+    Options.addCommonOptions(parser)
+    # Add Ruby options
+    Ruby.define_options(parser)
+    
     parser.add_argument("--kernel", type=str, required=True,
                         help="Path to kernel/bare-metal binary (ELF)")
     parser.add_argument("--max-ticks", type=int, default=None,
                         help="Maximum simulation ticks")
     
+    parser.add_argument("--mem-tech", default="dram", choices=["dram", "mram"],
+                        help="Main memory technology")
+    parser.add_argument("--boot-mode", default="sram", choices=["sram", "flash"],
+                        help="Boot source")
+    parser.add_argument("--mem-system", default="classic", choices=["classic", "ruby"],
+                        help="Memory system type")
+    
     args = parser.parse_args()
     
     # Create system
-    system = create_system()
+    system = create_system(args)
     
     # Set workload
     # For bare-metal with bootloader: boot ROM at 0x0 jumps to kernel at 0x80000000
