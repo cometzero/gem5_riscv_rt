@@ -26,10 +26,18 @@ echo "Log file: $BUILD_DIR/build.log"
 # Go to Zephyr workspace root
 cd src/zephyr
 
+# Check if board is custom and set BOARD_DIR
+BOARD_PATH="$(pwd)/../../boards/riscv/$BOARD"
+EXTRA_ARGS=""
+if [ -d "$BOARD_PATH" ]; then
+    echo "Using custom board dir: $BOARD_PATH"
+    EXTRA_ARGS="-DBOARD_DIR=$BOARD_PATH"
+fi
+
 # Build using west
 # 2>&1 | tee ... captures both stdout and stderr
 # Add project root to BOARD_ROOT to find custom boards
-west build -b $BOARD $APP_DIR -- -DBOARD_ROOT=$(pwd)/../../ 2>&1 | tee ../../$BUILD_DIR/build.log
+west build -b $BOARD $APP_DIR -- -DBOARD_ROOT=$(pwd)/../../ $EXTRA_ARGS 2>&1 | tee ../../$BUILD_DIR/build.log
 
 # Check for errors in the log (redundant with set -e but good for explicit check if pipe hides exit code)
 if [ ${PIPESTATUS[0]} -eq 0 ]; then

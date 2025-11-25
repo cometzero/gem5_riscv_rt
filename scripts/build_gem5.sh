@@ -60,8 +60,17 @@ echo "This may take 1-2 hours depending on your system"
 echo "Build log: $BUILD_LOG"
 echo ""
 
+# Determine build arguments
+BUILD_ARGS="build/RISCV/gem5.opt -j$(nproc)"
+PROTOCOL=$1
+
+if [ -n "$PROTOCOL" ]; then
+    echo "Building with Ruby Protocol: $PROTOCOL"
+    BUILD_ARGS="$BUILD_ARGS PROTOCOL=$PROTOCOL"
+fi
+
 # Run scons build
-scons build/RISCV/gem5.opt -j$(nproc) 2>&1 | tee "$BUILD_LOG"
+scons $BUILD_ARGS 2>&1 | tee "$BUILD_LOG"
 
 # Check build result
 if [ ${PIPESTATUS[0]} -eq 0 ]; then

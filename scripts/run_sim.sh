@@ -48,6 +48,7 @@ echo "Log file: $OUTPUT_DIR/sim.log"
 $GEM5_BIN -d "$OUTPUT_DIR" "$CONFIG_SCRIPT" \
     --kernel="$WORKLOAD_PATH" \
     --max-ticks="$MAX_TICKS" \
+    "${@:4}" \
     2>&1 | tee "$OUTPUT_DIR/sim.log"
 
 EXIT_CODE=${PIPESTATUS[0]}
