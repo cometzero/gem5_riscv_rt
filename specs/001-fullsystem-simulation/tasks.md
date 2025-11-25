@@ -207,23 +207,23 @@ IOD=1ms, >= 95% deadline compliance
 
 **Purpose**: Final checks and Phase 1 completion verification
 
-- [ ] T116 [P] Run constitution compliance check: verify LF line endings in all text files
-- [ ] T117 [P] Verify all files end with newline: find . -name "*.py" -o -name "*.sh" | xargs -I {} sh -c 'tail -c1 {} | od -An -tx1 | grep -q "0a" || echo "{} missing newline"'
-- [ ] T118 [P] Verify build logs exist: ls build/gem5/build.log build/zephyr/build.log
-- [ ] T119 [P] Verify all scripts have execute permissions: chmod +x scripts/*.sh
-- [ ] T120 Run full Phase 1 pipeline test: clone, check-env, build-gem5, build-zephyr, run-sim, postprocess
-- [ ] T121 Verify Phase 1 Definition of Done criterion 1: git clone + submodule update works
-- [ ] T122 Verify Phase 1 DoD criterion 2: scripts/check_env.sh → OK
-- [ ] T123 Verify Phase 1 DoD criterion 3: gem5 builds successfully
-- [ ] T124 Verify Phase 1 DoD criterion 4: Zephyr builds for gem5 target
-- [ ] T125 Verify Phase 1 DoD criterion 5: baseline simulation runs to completion
-- [ ] T126 Verify Phase 1 DoD criterion 6: Zephyr boots, workload runs >= 1000 iterations
-- [ ] T127 Verify Phase 1 DoD criterion 7: results in build/results/baseline/control_loop/
-- [ ] T128 Verify Phase 1 DoD criterion 8: docs/results/baseline_summary.csv generated
-- [ ] T129 Verify Phase 1 DoD criterion 9: metrics meet success criteria (IPC recorded, deadline compliance >= 95%)
-- [ ] T130 Verify Phase 1 DoD criterion 10: docs/phase1_report.md complete with reproduction instructions
-- [ ] T131 Run reproducibility test: execute simulation twice, compare IPC variance < 5%
-- [ ] T132 Create Phase 1 completion summary: list all milestones achieved, metrics collected, DoD criteria met
+- [x] T116 [P] Run constitution compliance check: verify LF line endings in all text files
+- [x] T117 [P] Verify all files end with newline: find . -name "*.py" -o -name "*.sh" | xargs -I {} sh -c 'tail -c1 {} | od -An -tx1 | grep -q "0a" || echo "{} missing newline"'
+- [x] T118 [P] Verify build logs exist: ls build/gem5/build.log build/zephyr/build.log
+- [x] T119 [P] Verify all scripts have execute permissions: chmod +x scripts/*.sh
+- [x] T120 Run full Phase 1 pipeline test: clone, check-env, build-gem5, build-zephyr, run-sim, postprocess
+- [x] T121 Verify Phase 1 Definition of Done criterion 1: git clone + submodule update works
+- [x] T122 Verify Phase 1 DoD criterion 2: scripts/check_env.sh → OK
+- [x] T123 Verify Phase 1 DoD criterion 3: gem5 builds successfully
+- [x] T124 Verify Phase 1 DoD criterion 4: Zephyr builds for gem5 target
+- [x] T125 Verify Phase 1 DoD criterion 5: baseline simulation runs to completion
+- [x] T126 Verify Phase 1 DoD criterion 6: Zephyr boots, workload runs >= 1000 iterations
+- [x] T127 Verify Phase 1 DoD criterion 7: results in build/results/baseline/control_loop/
+- [x] T128 Verify Phase 1 DoD criterion 8: docs/results/baseline_summary.csv generated
+- [x] T129 Verify Phase 1 DoD criterion 9: metrics meet success criteria (IPC recorded, deadline compliance >= 95%)
+- [x] T130 Verify Phase 1 DoD criterion 10: docs/phase1_report.md complete with reproduction instructions
+- [x] T131 Run reproducibility test: execute simulation twice, compare IPC variance < 5%
+- [x] T132 Create Phase 1 completion summary: list all milestones achieved, metrics collected, DoD criteria met
 
 ---
 
