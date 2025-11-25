@@ -45,3 +45,6 @@ venv/
 
 # gem5 simulation outputs
 m5out/
+
+# Zephyr RTOS source (managed by west)
+src/zephyr/
