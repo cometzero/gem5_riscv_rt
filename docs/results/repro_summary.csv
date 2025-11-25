@@ -1,0 +1,2 @@
+Config,Workload,IPC,L1I_Miss,L1D_Miss,L2_Miss,Mem_Latency,Avg_Response,Max_Response,Deadline_Misses,Iterations
+baseline,zephyr,0.1486,0.006654,0.024308,0.963636,0.00,0.00,0.00,0,0
