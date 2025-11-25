@@ -18,11 +18,11 @@
 
 ## Phase 3: User Story 1 - SRAM Boot (SRAM2, FLASH2)
 
-- [ ] T007 [US1] Implement Flash (ROM) model at `0x20000000` in `configs/riscv_rt/memory.py`
-- [ ] T008 [US1] Implement SRAM model at `0x80000000` in `configs/riscv_rt/memory.py`
-- [ ] T009 [US1] Update `configs/riscv_rt/base_fs.py` to support `--boot-mode=sram` and map the kernel accordingly
-- [ ] T010 [US1] Verify SRAM boot functionality using Classic Memory with a simple Zephyr Hello World
-- [ ] T011 [US1] Verify SRAM boot functionality using Ruby Memory with a simple Zephyr Hello World
+- [x] T007: Implement Flash (ROM) model at `0x20000000` in `configs/riscv_rt/memory.py` <!-- id: 7 -->
+- [x] T008: Implement SRAM model at `0x80000000` in `configs/riscv_rt/memory.py` <!-- id: 8 -->
+- [x] T009: Update `configs/riscv_rt/base_fs.py` to support `--boot-mode=sram` and map the kernel accordingly <!-- id: 9 -->
+- [x] T010 [US1] Verify SRAM boot functionality using Classic Memory with a simple Zephyr Hello World
+- [x] T011 [US1] Verify SRAM boot functionality using Ruby Memory with a simple Zephyr Hello World
 
 ## Phase 4: User Story 2 - Mixed Workloads (MIX)
 
