@@ -122,37 +122,37 @@ This is a single embedded system project with structure:
 
 IOD=1ms, >= 95% deadline compliance
 
-- [ ] T051 Create docs/workloads/automotive_baseline.md documenting workload structure
-- [ ] T052 Define periodic control task: period=1ms, deadline=1ms, priority=high
-- [ ] T053 Define background monitoring task: lower priority, non-real-time
-- [ ] T054 Define simulated sensor ISR: interrupt every 1ms
-- [ ] T055 Add pseudo-code for PID controller or simple state update algorithm
-- [ ] T056 Document timing measurement points: task start, task end, ISR latency
-- [ ] T057 Create workloads/automotive/control_loop/ directory for Zephyr app
-- [ ] T058 Create control_loop/src/main.c with Zephyr kernel API includes
-- [ ] T059 [P] Create control_loop/CMakeLists.txt for Zephyr build system
-- [ ] T060 Implement k_timer_define for 1ms periodic timer in main.c
-- [ ] T061 Implement control_task() with k_timer_status_sync() for period enforcement
-- [ ] T062 Add simulated sensor read (random number or counter) to control_task
-- [ ] T063 Add simple control algorithm (PID or state machine) to control_task
-- [ ] T064 Add simulated actuator write (printk or variable update) to control_task
-- [ ] T065 Add timestamp logging using k_cycle_get_32() at task start and end
-- [ ] T066 Implement sensor ISR with k_isr_direct() for interrupt handling
-- [ ] T067 [P] Create control_loop/prj.conf with CONFIG_PRINTK, CONFIG_TIMERS enabled
-- [ ] T068 Build control_loop for QEMU: west build -b qemu_riscv32 workloads/automotive/control_loop
-- [ ] T069 Test on QEMU and verify periodic task logs at ~1ms intervals
-- [ ] T070 Build control_loop for gem5: west build -b gem5_riscv32 workloads/automotive/control_loop
-- [ ] T071 Create scripts/run_automotive.sh to run gem5 with control_loop workload
-- [ ] T072 Configure simulation duration for >= 1000 task iterations (1 second simulated time)
-- [ ] T073 Execute run_automotive.sh and let simulation run to completion
-- [ ] T074 Extract timestamp data from terminal output or log file
-- [ ] T075 Calculate task response times: end_timestamp - start_timestamp
-- [ ] T076 Calculate inter-arrival times: start_timestamp[i+1] - start_timestamp[i]
-- [ ] T077 Count deadline misses: response_time > 1ms in cycles (500k cycles @ 500MHz)
-- [ ] T078 Verify >= 1000 task completions in log
-- [ ] T079 Verify deadline miss rate < 5% (< 50 misses out of 1000)
-- [ ] T080 Verify gem5 stats show workload cache/memory behavior
-- [ ] T081 Verify M4 completion: workload runs >= 1000 iterations, timing measured, deadline compliance verified
+- [x] T051 Create docs/workloads/automotive_baseline.md documenting workload structure
+- [x] T052 Define periodic control task: period=1ms, deadline=1ms, priority=high
+- [x] T053 Define background monitoring task: lower priority, non-real-time
+- [x] T054 Define simulated sensor ISR: interrupt every 1ms
+- [x] T055 Add pseudo-code for PID controller or simple state update algorithm
+- [x] T056 Document timing measurement points: task start, task end, ISR latency
+- [x] T057 Create workloads/automotive/control_loop/ directory for Zephyr app
+- [x] T058 Create control_loop/src/main.c with Zephyr kernel API includes
+- [x] T059 [P] Create control_loop/CMakeLists.txt for Zephyr build system
+- [x] T060 Implement k_timer_define for 1ms periodic timer in main.c
+- [x] T061 Implement control_task() with k_timer_status_sync() for period enforcement
+- [x] T062 Add simulated sensor read (random number or counter) to control_task
+- [x] T063 Add simple control algorithm (PID or state machine) to control_task
+- [x] T064 Add simulated actuator write (printk or variable update) to control_task
+- [x] T065 Add timestamp logging using k_cycle_get_32() at task start and end
+- [x] T066 Implement sensor ISR with k_isr_direct() for interrupt handling
+- [x] T067 [P] Create control_loop/prj.conf with CONFIG_PRINTK, CONFIG_TIMERS enabled
+- [x] T068 Build control_loop for QEMU: west build -b qemu_riscv32 workloads/automotive/control_loop
+- [x] T069 Test on QEMU and verify periodic task logs at ~1ms intervals
+- [x] T070 Build control_loop for gem5: west build -b gem5_riscv32 workloads/automotive/control_loop
+- [x] T071 Create scripts/run_automotive.sh to run gem5 with control_loop workload
+- [x] T072 Configure simulation duration for >= 1000 task iterations (1 second simulated time)
+- [x] T073 Execute run_automotive.sh and let simulation run to completion
+- [x] T074 Extract timestamp data from terminal output or log file
+- [x] T075 Calculate task response times: end_timestamp - start_timestamp
+- [x] T076 Calculate inter-arrival times: start_timestamp[i+1] - start_timestamp[i]
+- [x] T077 Count deadline misses: response_time > 1ms in cycles (500k cycles @ 500MHz)
+- [x] T078 Verify >= 1000 task completions in log
+- [x] T079 Verify deadline miss rate < 5% (< 50 misses out of 1000)
+- [x] T080 Verify gem5 stats show workload cache/memory behavior
+- [x] T081 Verify M4 completion: workload runs >= 1000 iterations, timing measured, deadline compliance verified
 
 **Checkpoint**: Automotive workload executes successfully, timing characteristics measured
 
