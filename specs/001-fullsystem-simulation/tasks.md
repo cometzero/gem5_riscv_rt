@@ -164,40 +164,40 @@ IOD=1ms, >= 95% deadline compliance
 
 **Independent Test**: Single command runs simulation and generates CSV with IPC, miss rates, latency, task timing
 
-- [ ] T082 Create scripts/run_sim.sh with arguments: CONFIG=$1, WORKLOAD=$2
-- [ ] T083 Add output directory creation: mkdir -p build/results/$CONFIG/$WORKLOAD
-- [ ] T084 Add gem5 execution command: gem5.opt -d $OUTDIR configs/riscv_rt/base_fs.py --kernel=$WORKLOAD
-- [ ] T085 Add simulation logging: 2>&1 | tee $OUTDIR/sim.log
-- [ ] T086 Add error handling and exit codes to run_sim.sh
-- [ ] T087 Add result path printing: echo "Results saved to $OUTDIR"
-- [ ] T088 Test run_sim.sh: ./scripts/run_sim.sh baseline control_loop
-- [ ] T089 Verify results directory created: build/results/baseline/control_loop/
-- [ ] T090 Verify output files exist: stats.txt, config.ini, sim.log, terminal
-- [ ] T091 Create scripts/postprocess_baseline.py with argparse for input directory
-- [ ] T092 [P] Create docs/results/ directory for output CSVs
-- [ ] T093 Implement parse_gem5_stats() function to extract IPC from stats.txt
-- [ ] T094 Add L1 I-cache miss rate extraction to parse_gem5_stats()
-- [ ] T095 Add L1 D-cache miss rate extraction to parse_gem5_stats()
-- [ ] T096 Add L2 cache miss rate extraction to parse_gem5_stats()
-- [ ] T097 Add average memory latency extraction to parse_gem5_stats()
-- [ ] T098 Implement parse_zephyr_log() to extract timestamps from terminal/sim.log
-- [ ] T099 Implement compute_response_times() to calculate task timing from timestamps
-- [ ] T100 Add average response time calculation to parse_zephyr_log()
-- [ ] T101 Add maximum response time calculation to parse_zephyr_log()
-- [ ] T102 Add deadline miss count to parse_zephyr_log() (>1ms in cycles)
-- [ ] T103 Implement CSV output: write combined stats to docs/results/baseline_summary.csv
-- [ ] T104 Add CSV headers: Config,Workload,IPC,L1I_Miss,L1D_Miss,L2_Miss,Mem_Latency,Avg_Response,Max_Response,Deadline_Misses
-- [ ] T105 Test postprocess_baseline.py on M5-001 simulation output
-- [ ] T106 Verify CSV contains all expected columns with reasonable values
-- [ ] T107 Verify IPC > 0, miss rates 0-100%, latencies > 0
-- [ ] T108 Create docs/phase1_report.md with Phase 1 executive summary
-- [ ] T109 Add system configuration table to phase1_report.md (CPU, cache, memory, workload params)
-- [ ] T110 Add baseline performance metrics table/chart to phase1_report.md
-- [ ] T111 Add known limitations section: STT-MRAM not integrated, TCM not configured, no sweeps
-- [ ] T112 Add Phase 2 preview: STT-MRAM, TCM, parameter sweeps, advanced workloads
-- [ ] T113 Add reproduction instructions to phase1_report.md: exact command sequence from clone to results
-- [ ] T114 Test reproduction instructions: follow commands in clean environment (or document for manual verification)
-- [ ] T115 Verify M5 completion: run_sim.sh works, postprocess generates CSV, phase1_report.md complete
+- [x] T082 Create scripts/run_sim.sh with arguments: CONFIG=$1, WORKLOAD=$2
+- [x] T083 Add output directory creation: mkdir -p build/results/$CONFIG/$WORKLOAD
+- [x] T084 Add gem5 execution command: gem5.opt -d $OUTDIR configs/riscv_rt/base_fs.py --kernel=$WORKLOAD
+- [x] T085 Add simulation logging: 2>&1 | tee $OUTDIR/sim.log
+- [x] T086 Add error handling and exit codes to run_sim.sh
+- [x] T087 Add result path printing: echo "Results saved to $OUTDIR"
+- [x] T088 Test run_sim.sh: ./scripts/run_sim.sh baseline control_loop
+- [x] T089 Verify results directory created: build/results/baseline/control_loop/
+- [x] T090 Verify output files exist: stats.txt, config.ini, sim.log, terminal
+- [x] T091 Create scripts/postprocess_baseline.py with argparse for input directory
+- [x] T092 [P] Create docs/results/ directory for output CSVs
+- [x] T093 Implement parse_gem5_stats() function to extract IPC from stats.txt
+- [x] T094 Add L1 I-cache miss rate extraction to parse_gem5_stats()
+- [x] T095 Add L1 D-cache miss rate extraction to parse_gem5_stats()
+- [x] T096 Add L2 cache miss rate extraction to parse_gem5_stats()
+- [x] T097 Add average memory latency extraction to parse_gem5_stats()
+- [x] T098 Implement parse_zephyr_log() to extract timestamps from terminal/sim.log
+- [x] T099 Implement compute_response_times() to calculate task timing from timestamps
+- [x] T100 Add average response time calculation to parse_zephyr_log()
+- [x] T101 Add maximum response time calculation to parse_zephyr_log()
+- [x] T102 Add deadline miss count to parse_zephyr_log() (>1ms in cycles)
+- [x] T103 Implement CSV output: write combined stats to docs/results/baseline_summary.csv
+- [x] T104 Add CSV headers: Config,Workload,IPC,L1I_Miss,L1D_Miss,L2_Miss,Mem_Latency,Avg_Response,Max_Response,Deadline_Misses
+- [x] T105 Test postprocess_baseline.py on M5-001 simulation output
+- [x] T106 Verify CSV contains all expected columns with reasonable values
+- [x] T107 Verify IPC > 0, miss rates 0-100%, latencies > 0
+- [x] T108 Create docs/phase1_report.md with Phase 1 executive summary
+- [x] T109 Add system configuration table to phase1_report.md (CPU, cache, memory, workload params)
+- [x] T110 Add baseline performance metrics table/chart to phase1_report.md
+- [x] T111 Add known limitations section: STT-MRAM not integrated, TCM not configured, no sweeps
+- [x] T112 Add Phase 2 preview: STT-MRAM, TCM, parameter sweeps, advanced workloads
+- [x] T113 Add reproduction instructions to phase1_report.md: exact command sequence from clone to results
+- [x] T114 Test reproduction instructions: follow commands in clean environment (or document for manual verification)
+- [x] T115 Verify M5 completion: run_sim.sh works, postprocess generates CSV, phase1_report.md complete
 
 **Checkpoint**: Automated pipeline runs simulation and collects all required metrics
 
