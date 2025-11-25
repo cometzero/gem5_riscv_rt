@@ -26,11 +26,11 @@
 
 ## Phase 4: User Story 2 - Mixed Workloads (MIX)
 
-- [ ] T012 [US2] Create `workloads/automotive/mixed_criticality/src/main.c` with critical and non-critical tasks
-- [ ] T013 [US2] Define linker section macros for `.sram_text` and `.sram_data` in the workload source
-- [ ] T014 [US2] Create `workloads/automotive/mixed_criticality/prj.conf` enabling required Zephyr features
-- [ ] T015 [US2] Update Zephyr linker script (or use CMake) to map `.sram_text` to the SRAM region
-- [ ] T016 [US2] Verify mixed workload execution: Critical task runs in SRAM, background in DRAM
+- [x] T012 [US2] Create `workloads/automotive/mixed_criticality/src/main.c` with critical and non-critical tasks
+- [x] T013 [US2] Define linker section macros for `.sram_text` and `.sram_data` in the workload source
+- [x] T014 [US2] Create `workloads/automotive/mixed_criticality/prj.conf` enabling required Zephyr features
+- [x] T015 [US2] Update Zephyr linker script (or use CMake) to map `.sram_text` to the SRAM region
+- [x] T016 [US2] Verify mixed workload execution: Critical task runs in SRAM, background in DRAM
 
 ## Phase 5: User Story 3 - STT-MRAM (STTM)
 
