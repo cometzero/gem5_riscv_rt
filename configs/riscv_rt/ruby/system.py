@@ -19,6 +19,7 @@ def create_ruby_system(system, options, mem_ranges):
         options: argparse options (must contain num_cpus, etc.)
         mem_ranges: List of AddrRange objects for the memory
     """
+    print("DEBUG: Entering create_ruby_system")
     
     if "RUBY" not in buildEnv:
         m5.fatal("Gem5 was not compiled with Ruby support!")
@@ -41,19 +42,72 @@ def create_ruby_system(system, options, mem_ranges):
     Ruby.create_system(options, True, system, piobus=system.iobus, 
                        dma_ports=[system.iobus.mem_side_ports])
     
-    # system.system_port is connected in base_fs.py via IOBus
+    print(f"DEBUG: system.ruby type: {type(system.ruby)}")
+    # print(f"DEBUG: system.ruby attrs: {dir(system.ruby)}")
     
-    # Configure Directory Controllers for Heterogeneous Memory
-    # MI_example creates a Directory_Controller for each directory
-    # We need to map them to our specific ranges (SRAM, DRAM, etc.)
-    
-    # Note: Ruby.create_system usually divides the total memory equally among dirs.
-    # We might need to manually override the ranges.
-    
-    if hasattr(system.ruby, 'dir_cntrls'):
-        # Assuming 1 CPU, we might have 1 or more dirs.
-        # If we have multiple ranges, we should ideally have multiple dirs.
-        # For MVP, we let Ruby handle the mapping or assume a single directory covers all.
-        pass
+    if hasattr(system, 'mem_ctrls'):
+        # Import STTMRAM if needed
+        from configs.riscv_rt.memory import STTMRAM
         
+        print(f"DEBUG: system.mem_ctrls len: {len(system.mem_ctrls)}")
+        for i, mc in enumerate(system.mem_ctrls):
+            # Determine range
+            r = None
+            if isinstance(mc, m5.objects.MemCtrl):
+                r = mc.dram.range
+            elif hasattr(mc, 'range'):
+                r = mc.range
+            
+            print(f"DEBUG: MemCtrl {i}: {type(mc)} range={r} start={r.start if r else 'N/A'}")
+            
+            # Check if this is Main Memory (0x80200000)
+            if r and int(r.start) == 0x80200000:
+                print(f"DEBUG: options.mem_tech={getattr(options, 'mem_tech', 'N/A')}")
+                if getattr(options, 'mem_tech', 'dram') == 'mram':
+                    print(f"Info: Replacing Memory Controller {i} with STT-MRAM")
+                    
+                    # Create new STTMRAM controller
+                    new_intf = STTMRAM()
+                    new_intf.range = r
+                    
+                    new_ctrl = m5.objects.MemCtrl()
+                    new_ctrl.dram = new_intf
+                    new_ctrl.clk_domain = system.clk_domain
+                    
+                    # Connect to crossbar
+                    # Assuming 1 directory or mapping logic holds
+                    num_ranges = len(mem_ranges)
+                    dir_index = i // num_ranges
+                    
+                    if hasattr(system.ruby, 'crossbars'):
+                        xbar = system.ruby.crossbars[dir_index]
+                        new_ctrl.port = xbar.mem_side_ports
+                        
+                        # Parent the new controller explicitly
+                        system.mram_ctrl = new_ctrl
+                        
+                        # Disable the old controller by setting range to a safe unused address
+                        # We do NOT update system.mem_ctrls to avoid SimObjectVector parenting issues
+                        old_ctrl = system.mem_ctrls[i]
+                        
+                        # Check if old_ctrl is MemCtrl or SimpleMemory
+                        from m5.objects import AddrRange
+                        # Use a high address that is unlikely to be accessed
+                        safe_range = AddrRange(0x90000000, size=64)
+                        
+                        if hasattr(old_ctrl, 'dram'):
+                            old_ctrl.dram.range = safe_range
+                        else:
+                            old_ctrl.range = safe_range
+                        
+                        # Also ensure clk_domain is set on new controller
+                        new_ctrl.clk_domain = system.clk_domain
+                        new_intf.clk_domain = system.clk_domain
+                        
+                        print(f"DEBUG: Disabled old controller {i} by moving to {safe_range}")
+                        print(f"DEBUG: system.clk_domain={system.clk_domain}")
+                        print(f"DEBUG: new_ctrl.clk_domain={new_ctrl.clk_domain}")
+                    else:
+                        print("Warning: Could not find crossbar to connect STT-MRAM. Skipping replacement.")
+
     return system

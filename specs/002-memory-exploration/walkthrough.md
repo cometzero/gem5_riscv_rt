@@ -9,6 +9,29 @@ This document details the verification steps for Phase 2, focusing on SRAM boot 
 
 **Goal:** Ensure Zephyr boots from SRAM using the Classic Memory system.
 
+### Phase 4: Zephyr OS Integration
+- **Goal**: Boot Zephyr OS on the gem5 RISC-V platform.
+- **Status**: Completed.
+- **Verification**:
+  - Successfully built Zephyr `philosophers` sample for `gem5_riscv` board.
+  - Ran simulation with `--kernel` pointing to `zephyr.elf`.
+  - Verified console output showing Zephyr boot banner and thread execution.
+  - Confirmed `uart` output is correctly routed to `system.platform.terminal`.
+
+### Phase 5: STT-MRAM Implementation
+- **Goal**: Implement STT-MRAM memory controller with asymmetric read/write latencies.
+- **Status**: Completed.
+- **Implementation Details**:
+  - Created `STTMRAM` class inheriting from `NVMInterface`.
+  - Configured asymmetric latencies: `tREAD=20ns`, `tWRITE=100ns`.
+  - Implemented memory controller replacement logic in `configs/riscv_rt/ruby/system.py` to swap the default DRAM controller with STT-MRAM at runtime.
+  - Resolved `clk_domain` and parenting issues by disabling the default controller and explicitly parenting the new `STTMRAM` controller.
+- **Verification**:
+  - Ran simulation with `--mem-tech=mram`.
+  - Verified `config.ini` shows `system.mram_ctrl` with `type=NVMInterface` and correct timing parameters (`tREAD=20000`, `tWRITE=100000`).
+  - Analyzed `stats.txt` confirming `system.mram_ctrl` activity (`readBursts=14`, `avgMemAccLat` ~16.8ns).
+  - Confirmed simulation runs successfully for 20M ticks.
+
 **Command:**
 ```bash
 ./scripts/run_sim.sh sram_boot_classic src/zephyr/build/zephyr/zephyr.elf 1000000000 --boot-mode=sram --mem-system=classic

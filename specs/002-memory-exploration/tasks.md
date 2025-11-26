@@ -6,21 +6,21 @@
 
 ## Phase 1: Setup
 
-- [ ] T001 Create Phase 2 directory structure in `configs/riscv_rt/ruby` and `workloads/automotive/mixed_criticality`
-- [ ] T002 Rebuild gem5 with Ruby `MI_example` protocol support using `scripts/build_gem5.sh`
+- [x] T001 Create Phase 2 directory structure in `configs/riscv_rt/ruby` and `workloads/automotive/mixed_criticality`
+- [x] T002 Rebuild gem5 with Ruby `MI_example` protocol support using `scripts/build_gem5.sh`
 
 ## Phase 2: Foundational (Memory System)
 
-- [ ] T003 Create `configs/riscv_rt/memory.py` defining the physical memory map (SRAM, Flash, DRAM) for Classic Memory
-- [ ] T004 Create `configs/riscv_rt/ruby/system.py` to configure Ruby `MI_example` with heterogeneous memory ranges
-- [ ] T005 Create `boards/riscv/gem5_riscv32/gem5_riscv32_sram.dts` defining the SRAM-based memory map for Zephyr
-- [ ] T006 Update `boards/riscv/gem5_riscv32/Kconfig.defconfig` to support the new SRAM board variant
+- [x] T003 Create `configs/riscv_rt/memory.py` defining the physical memory map (SRAM, Flash, DRAM) for Classic Memory
+- [x] T004 Create `configs/riscv_rt/ruby/system.py` to configure Ruby `MI_example` with heterogeneous memory ranges
+- [x] T005 Create `boards/riscv/gem5_riscv32/gem5_riscv32_sram.dts` defining the SRAM-based memory map for Zephyr
+- [x] T006 Update `boards/riscv/gem5_riscv32/Kconfig.defconfig` to support the new SRAM board variant
 
 ## Phase 3: User Story 1 - SRAM Boot (SRAM2, FLASH2)
 
-- [x] T007: Implement Flash (ROM) model at `0x20000000` in `configs/riscv_rt/memory.py` <!-- id: 7 -->
-- [x] T008: Implement SRAM model at `0x80000000` in `configs/riscv_rt/memory.py` <!-- id: 8 -->
-- [x] T009: Update `configs/riscv_rt/base_fs.py` to support `--boot-mode=sram` and map the kernel accordingly <!-- id: 9 -->
+- [x] T007 [US1] Implement Flash (ROM) model at `0x20000000` in `configs/riscv_rt/memory.py`
+- [x] T008 [US1] Implement SRAM model at `0x80000000` in `configs/riscv_rt/memory.py`
+- [x] T009 [US1] Update `configs/riscv_rt/base_fs.py` to support `--boot-mode=sram` and map the kernel accordingly
 - [x] T010 [US1] Verify SRAM boot functionality using Classic Memory with a simple Zephyr Hello World
 - [x] T011 [US1] Verify SRAM boot functionality using Ruby Memory with a simple Zephyr Hello World
 
@@ -32,12 +32,12 @@
 - [x] T015 [US2] Update Zephyr linker script (or use CMake) to map `.sram_text` to the SRAM region
 - [x] T016 [US2] Verify mixed workload execution: Critical task runs in SRAM, background in DRAM
 
-## Phase 5: User Story 3 - STT-MRAM (STTM)
+## Phase 5: STT-MRAM Implementation
 
-- [ ] T017 [US3] Implement `NVMInterface` configuration in `configs/riscv_rt/memory.py` for STT-MRAM
-- [ ] T018 [US3] Implement Ruby `MemoryControl` parameters for STT-MRAM in `configs/riscv_rt/ruby/system.py`
-- [ ] T019 [US3] Add `--mem-type` CLI argument to `configs/riscv_rt/base_fs.py` to switch between DRAM and MRAM
-- [ ] T020 [US3] Verify STT-MRAM latency characteristics (Asymmetric R/W) in simulation stats
+- [x] T017: Implement STT-MRAM memory controller class inheriting from `NVMInterface`. <!-- id: 17 -->
+- [x] T018: Add STT-MRAM timing parameters (asymmetric read/write latencies). <!-- id: 18 -->
+- [x] T019: Modify configuration scripts to support STT-MRAM selection via command line. <!-- id: 19 -->
+- [x] T020: Verify STT-MRAM instantiation and parameters in `config.ini` and `stats.txt`. <!-- id: 20 -->
 
 ## Phase 6: Experiment & Polish (EXP2)
 

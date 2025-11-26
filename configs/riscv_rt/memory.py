@@ -10,6 +10,49 @@ Defines the heterogeneous memory map including:
 
 from m5.objects import *
 
+class STTMRAM(NVMInterface):
+    """
+    STT-MRAM Memory Model
+    Based on NVMInterface with asymmetric read/write latencies.
+    """
+    # 128MB device size to match our DRAM configuration
+    device_size = "128MB"
+    
+    # Timing parameters (approximate for STT-MRAM)
+    # Read: Fast, similar to DRAM (~20ns)
+    # Write: Slow, significantly higher than DRAM (~100ns)
+    tREAD = "20ns"
+    tWRITE = "100ns"
+    tSEND = "10ns"
+    
+    # Interface parameters
+    device_bus_width = 8
+    burst_length = 8
+    devices_per_rank = 8
+    ranks_per_channel = 1
+    banks_per_rank = 8
+    
+    # Required by MemInterface
+    device_rowbuffer_size = "256B"
+    
+    # Buffer sizes
+    write_buffer_size = 64
+    read_buffer_size = 32
+    
+    # Required for stats (must be > 1)
+    max_pending_writes = 8
+    max_pending_reads = 8
+    
+    # Timing
+    tCK = "1ns"
+    tBURST = "4ns"
+    tWTR = "2ns"
+    tRTW = "2ns"
+    tCS = "2ns"
+    
+    # STT-MRAM Latencies (Asymmetric)
+    # Read is faster than Write
+
 def create_memory_system(system, membus, mem_type="dram"):
     """
     Create the memory objects and attach them to the memory bus.
@@ -50,11 +93,8 @@ def create_memory_system(system, membus, mem_type="dram"):
         # Standard DDR3
         system.mem_ctrl.dram = DDR3_1600_8x8()
     elif mem_type == "mram":
-        # STT-MRAM Model (Placeholder using modified DDR3 for now)
-        # Will be replaced by NVMInterface in Phase 5
-        system.mem_ctrl.dram = DDR3_1600_8x8()
-        system.mem_ctrl.dram.tCL = "10ns"   # Fast Read
-        system.mem_ctrl.dram.tCWL = "50ns"  # Slow Write
+        # STT-MRAM Model
+        system.mem_ctrl.dram = STTMRAM()
         
     system.mem_ctrl.dram.range = dram_range
     system.mem_ctrl.port = membus.mem_side_ports
