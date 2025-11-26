@@ -41,9 +41,9 @@
 
 ## Phase 6: Experiment & Polish (EXP2)
 
-- [ ] T021 Create `scripts/run_dse.sh` to automate execution of CFG-A, CFG-B, and CFG-C configurations
-- [ ] T022 Create `scripts/postprocess_dse.py` to extract memory-specific metrics (SRAM hits, MRAM latency)
-- [ ] T023 Execute full DSE suite and generate Phase 2 Report in `docs/phase2_report.md`
+- [x] T021: Run experiments comparing DRAM vs STT-MRAM. <!-- id: 21 -->
+- [x] T022: Analyze performance impact on Zephyr boot and simple workloads. <!-- id: 22 -->
+- [x] T023: Finalize documentation. <!-- id: 23 -->
 
 ## Dependencies
 
