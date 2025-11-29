@@ -28,6 +28,14 @@ The framework allows for the simulation of complex real-time workloads on a cust
 - **Mixed Workloads**: Implemented spatial isolation for critical vs. non-critical tasks.
 - [View Phase 2 Report](docs/phase2_report.md)
 
+### Phase 3: Quad-Core AMP
+*Status: Complete*
+- **Platform**: Extended `HiFive` to `QuadHiFive` with 4 Cores and 4 UARTs.
+- **AMP Boot**: Custom bootloader dispatching each core to its own Zephyr kernel.
+- **Interrupts**: Dedicated UART interrupt routing for each core.
+- **Result**: Successful boot of 4 independent Zephyr instances on a single SoC.
+- [View Phase 3 Report](docs/phase3_report.md)
+
 ## Repository Structure
 
 ```text
