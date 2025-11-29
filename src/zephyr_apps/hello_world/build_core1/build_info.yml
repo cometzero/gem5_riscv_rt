@@ -1,0 +1,62 @@
+cmake:
+  application:
+    configuration-dir: '/home/ubuntu/work/gem5/gem5_riscv_rt/src/zephyr_apps/hello_world'
+    source-dir: '/home/ubuntu/work/gem5/gem5_riscv_rt/src/zephyr_apps/hello_world'
+  board:
+    name: 'hifive1'
+    path:
+     - '/home/ubuntu/work/gem5/gem5_riscv_rt/src/zephyr/zephyr/boards/sifive/hifive1'
+    qualifiers: 'fe310_g000'
+    revision: ''
+  devicetree:
+    bindings-dirs:
+     - '/home/ubuntu/work/gem5/gem5_riscv_rt/src/zephyr/zephyr/dts/bindings'
+    extra-user-files:
+     - 'gem5_amp_core1.overlay'
+    files:
+     - '/home/ubuntu/work/gem5/gem5_riscv_rt/src/zephyr/zephyr/boards/sifive/hifive1/hifive1.dts'
+     - 'gem5_amp_core1.overlay'
+    include-dirs:
+     - '/home/ubuntu/work/gem5/gem5_riscv_rt/src/zephyr/modules/hal/ambiq/dts'
+     - '/home/ubuntu/work/gem5/gem5_riscv_rt/src/zephyr/modules/hal/atmel/include'
+     - '/home/ubuntu/work/gem5/gem5_riscv_rt/src/zephyr/modules/hal/bouffalolab/include'
+     - '/home/ubuntu/work/gem5/gem5_riscv_rt/src/zephyr/modules/hal/bouffalolab/include/zephyr'
+     - '/home/ubuntu/work/gem5/gem5_riscv_rt/src/zephyr/modules/hal/gigadevice/include'
+     - '/home/ubuntu/work/gem5/gem5_riscv_rt/src/zephyr/modules/hal/microchip/include'
+     - '/home/ubuntu/work/gem5/gem5_riscv_rt/src/zephyr/modules/hal/microchip/dts'
+     - '/home/ubuntu/work/gem5/gem5_riscv_rt/src/zephyr/modules/hal/nuvoton/dts'
+     - '/home/ubuntu/work/gem5/gem5_riscv_rt/src/zephyr/modules/hal/nxp/dts'
+     - '/home/ubuntu/work/gem5/gem5_riscv_rt/src/zephyr/modules/hal/stm32/dts'
+     - '/home/ubuntu/work/gem5/gem5_riscv_rt/src/zephyr/modules/hal/ti/dts'
+     - '/home/ubuntu/work/gem5/gem5_riscv_rt/src/zephyr/zephyr/include'
+     - '/home/ubuntu/work/gem5/gem5_riscv_rt/src/zephyr/zephyr/include/zephyr'
+     - '/home/ubuntu/work/gem5/gem5_riscv_rt/src/zephyr/zephyr/dts/common'
+     - '/home/ubuntu/work/gem5/gem5_riscv_rt/src/zephyr/zephyr/dts/vendor'
+     - '/home/ubuntu/work/gem5/gem5_riscv_rt/src/zephyr/zephyr/dts/rx'
+     - '/home/ubuntu/work/gem5/gem5_riscv_rt/src/zephyr/zephyr/dts/x86'
+     - '/home/ubuntu/work/gem5/gem5_riscv_rt/src/zephyr/zephyr/dts/xtensa'
+     - '/home/ubuntu/work/gem5/gem5_riscv_rt/src/zephyr/zephyr/dts/sparc'
+     - '/home/ubuntu/work/gem5/gem5_riscv_rt/src/zephyr/zephyr/dts/riscv'
+     - '/home/ubuntu/work/gem5/gem5_riscv_rt/src/zephyr/zephyr/dts/posix'
+     - '/home/ubuntu/work/gem5/gem5_riscv_rt/src/zephyr/zephyr/dts/arm64'
+     - '/home/ubuntu/work/gem5/gem5_riscv_rt/src/zephyr/zephyr/dts/arm'
+     - '/home/ubuntu/work/gem5/gem5_riscv_rt/src/zephyr/zephyr/dts/arc'
+     - '/home/ubuntu/work/gem5/gem5_riscv_rt/src/zephyr/zephyr/dts'
+  kconfig:
+    files:
+     - '/home/ubuntu/work/gem5/gem5_riscv_rt/src/zephyr/zephyr/boards/sifive/hifive1/hifive1_defconfig'
+     - '/home/ubuntu/work/gem5/gem5_riscv_rt/src/zephyr_apps/hello_world/prj.conf'
+     - '/home/ubuntu/work/gem5/gem5_riscv_rt/src/zephyr_apps/hello_world/build_core1/zephyr/misc/generated/extra_kconfig_options.conf'
+    user-files:
+     - '/home/ubuntu/work/gem5/gem5_riscv_rt/src/zephyr_apps/hello_world/prj.conf'
+  toolchain:
+    name: 'zephyr'
+    path: '/home/ubuntu/zephyr-sdk-0.16.8'
+  zephyr:
+    version: '4.3.99'
+    zephyr-base: '/home/ubuntu/work/gem5/gem5_riscv_rt/src/zephyr/zephyr'
+version: '0.1.0'
+west:
+  command: '/home/ubuntu/.local/bin/west build -b hifive1 -d build_core1 . -- -DEXTRA_DTC_OVERLAY_FILE=gem5_amp_core1.overlay -DCONFIG_XIP=n -DCONFIG_UART_NS16550=y -DCONFIG_RV_BOOT_HART=1'
+  topdir: '/home/ubuntu/work/gem5/gem5_riscv_rt/src/zephyr'
+  version: '1.5.0'

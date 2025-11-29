@@ -1,0 +1,585 @@
+# 0 "/home/ubuntu/work/gem5/gem5_riscv_rt/src/zephyr/zephyr/misc/empty_file.c"
+# 0 "<built-in>"
+# 0 "<command-line>"
+# 1 "/home/ubuntu/work/gem5/gem5_riscv_rt/src/zephyr/zephyr/boards/sifive/hifive1/hifive1.dts" 1
+
+
+
+/dts-v1/;
+
+# 1 "/home/ubuntu/work/gem5/gem5_riscv_rt/src/zephyr/zephyr/dts/riscv/sifive/riscv32-fe310.dtsi" 1 3 4
+
+
+# 1 "/home/ubuntu/work/gem5/gem5_riscv_rt/src/zephyr/zephyr/include/zephyr/dt-bindings/gpio/gpio.h" 1 3 4
+# 4 "/home/ubuntu/work/gem5/gem5_riscv_rt/src/zephyr/zephyr/dts/riscv/sifive/riscv32-fe310.dtsi" 2 3 4
+# 1 "/home/ubuntu/work/gem5/gem5_riscv_rt/src/zephyr/zephyr/include/zephyr/dt-bindings/pwm/pwm.h" 1 3 4
+# 5 "/home/ubuntu/work/gem5/gem5_riscv_rt/src/zephyr/zephyr/dts/riscv/sifive/riscv32-fe310.dtsi" 2 3 4
+# 1 "/home/ubuntu/work/gem5/gem5_riscv_rt/src/zephyr/zephyr/dts/common/freq.h" 1 3 4
+# 6 "/home/ubuntu/work/gem5/gem5_riscv_rt/src/zephyr/zephyr/dts/riscv/sifive/riscv32-fe310.dtsi" 2 3 4
+
+/ {
+ #address-cells = <1>;
+ #size-cells = <1>;
+ compatible = "sifive,FE310G-0002-Z0-dev", "fe310-dev", "sifive-dev";
+ model = "SiFive,FE310G-0002-Z0";
+
+ clocks {
+  coreclk: core-clk {
+   #clock-cells = <0>;
+   compatible = "fixed-clock";
+   clock-frequency = <(((16) * 1000) * 1000)>;
+  };
+
+  tlclk: tl-clk {
+   #clock-cells = <0>;
+   compatible = "fixed-factor-clock";
+   clocks = <&coreclk>;
+   clock-div = <1>;
+  };
+ };
+
+ cpus {
+  #address-cells = <1>;
+  #size-cells = <0>;
+
+  cpu: cpu@0 {
+   compatible = "sifive,e31", "riscv";
+   device_type = "cpu";
+   reg = <0>;
+   riscv,isa = "rv32imac_zicsr_zifencei";
+   status = "okay";
+
+   hlic: interrupt-controller {
+    compatible = "riscv,cpu-intc";
+    #address-cells = <0>;
+    #interrupt-cells = <1>;
+    interrupt-controller;
+   };
+  };
+ };
+
+ soc {
+  #address-cells = <1>;
+  #size-cells = <1>;
+  compatible = "sifive,FE310G-0002-Z0-soc", "fe310-soc",
+        "sifive-soc", "simple-bus";
+  ranges;
+
+  wdog0: wdog@10000000 {
+   compatible = "sifive,wdt";
+   interrupt-parent = <&plic>;
+   interrupts = <1 1>;
+   reg = <0x10000000 0x40>;
+   reg-names = "control";
+  };
+
+  aon: aon@10000040 {
+   compatible = "sifive,aon0";
+   interrupt-parent = <&plic>;
+   interrupts = <2 1>;
+   reg = <0x10000040 0x9c0>;
+   reg-names = "control";
+  };
+
+  clint: clint@2000000 {
+   compatible = "sifive,clint0";
+   interrupts-extended = <&hlic 3 &hlic 7>;
+   reg = <0x2000000 0x10000>;
+  };
+
+  mtimer: timer@200bff8 {
+   compatible = "riscv,machine-timer";
+   interrupts-extended = <&hlic 7>;
+   reg = <0x200bff8 0x8 0x2004000 0x8>;
+   reg-names = "mtime", "mtimecmp";
+  };
+
+  debug: debug-controller@0 {
+   compatible = "sifive,debug-013", "riscv,debug-013";
+   interrupts-extended = <&hlic 65535>;
+   reg = <0x0 0x1000>;
+   reg-names = "control";
+  };
+
+  dtim: dtim@80000000 {
+   compatible = "sifive,dtim0";
+   reg = <0x80000000 0x4000>;
+   reg-names = "mem";
+  };
+
+  error-device@3000 {
+   compatible = "sifive,error0";
+   reg = <0x3000 0x1000>;
+   reg-names = "mem";
+  };
+
+  gpio0: gpio@10012000 {
+   compatible = "sifive,gpio0";
+   gpio-controller;
+   interrupt-parent = <&plic>;
+   interrupts = <8 1>, <9 1>, <10 1>, <11 1>,
+         <12 1>, <13 1>, <14 1>, <15 1>,
+         <16 1>, <17 1>, <18 1>, <19 1>,
+         <20 1>, <21 1>, <22 1>, <23 1>,
+         <24 1>, <25 1>, <26 1>, <27 1>,
+         <28 1>, <29 1>, <30 1>, <31 1>,
+         <32 1>, <33 1>, <34 1>, <35 1>,
+         <36 1>, <37 1>, <38 1>, <39 1>;
+   reg = <0x10012000 0x1000>;
+   reg-names = "control";
+   status = "disabled";
+   #gpio-cells = <2>;
+
+   #address-cells = <1>;
+   #size-cells = <1>;
+   ranges;
+
+   pinctrl: pinctrl@10012038 {
+    compatible = "sifive,pinctrl";
+    reg = <0x10012038 0x8>;
+   };
+  };
+
+  i2c0: i2c@10016000 {
+   compatible = "sifive,i2c0";
+   interrupt-parent = <&plic>;
+   interrupts = <52 1>;
+   reg = <0x10016000 0x1000>;
+   reg-names = "control";
+   status = "disabled";
+   #address-cells = <1>;
+   #size-cells = <0>;
+  };
+
+  plic: interrupt-controller@c000000 {
+   compatible = "sifive,plic-1.0.0";
+   #address-cells = <0>;
+   #interrupt-cells = <2>;
+   interrupt-controller;
+   interrupts-extended = <&hlic 11>;
+   reg = <0x0c000000 0x04000000>;
+   riscv,max-priority = <7>;
+   riscv,ndev = <52>;
+  };
+
+  itim: itim@8000000 {
+   compatible = "sifive,itim0";
+   reg = <0x8000000 0x2000>;
+   reg-names = "mem";
+  };
+
+  otp: otp@10010000 {
+   compatible = "sifive,otp0";
+   reg = <0x10010000 0x1000 0x20000 0x2000>;
+   reg-names = "control", "mem";
+  };
+
+  prci: prci@10008000 {
+   compatible = "sifive,freedome300prci0";
+   reg = <0x10008000 0x1000>;
+   reg-names = "control";
+  };
+
+  pwm0: pwm@10015000 {
+   compatible = "sifive,pwm0";
+   interrupt-parent = <&plic>;
+   interrupts = <40 1>, <41 1>, <42 1>, <43 1>;
+   reg = <0x10015000 0x1000>;
+   reg-names = "control";
+   status = "disabled";
+   sifive,compare-width = <8>;
+   #pwm-cells = <2>;
+  };
+
+  pwm1: pwm@10025000 {
+   compatible = "sifive,pwm0";
+   interrupt-parent = <&plic>;
+   interrupts = <44 1>, <45 1>, <46 1>, <47 1>;
+   reg = <0x10025000 0x1000>;
+   reg-names = "control";
+   status = "disabled";
+   sifive,compare-width = <16>;
+   #pwm-cells = <2>;
+  };
+
+  pwm2: pwm@10035000 {
+   compatible = "sifive,pwm0";
+   interrupt-parent = <&plic>;
+   interrupts = <48 1>, <49 1>, <50 1>, <51 1>;
+   reg = <0x10035000 0x1000>;
+   reg-names = "control";
+   status = "disabled";
+   sifive,compare-width = <16>;
+   #pwm-cells = <2>;
+  };
+
+  modeselect: rom@1000 {
+   compatible = "sifive,modeselect0";
+   reg = <0x1000 0x1000>;
+   reg-names = "mem";
+  };
+
+  maskrom: rom@10000 {
+   compatible = "sifive,maskrom0";
+   reg = <0x10000 0x2000>;
+   reg-names = "mem";
+  };
+
+  uart0: serial@10013000 {
+   compatible = "sifive,uart0";
+   interrupt-parent = <&plic>;
+   interrupts = <3 1>;
+   reg = <0x10013000 0x1000>;
+   reg-names = "control";
+   status = "disabled";
+  };
+
+  uart1: serial@10023000 {
+   compatible = "sifive,uart0";
+   interrupt-parent = <&plic>;
+   interrupts = <4 1>;
+   reg = <0x10023000 0x1000>;
+   reg-names = "control";
+   status = "disabled";
+  };
+
+  spi0: spi@10014000 {
+   compatible = "sifive,spi0";
+   interrupt-parent = <&plic>;
+   interrupts = <5 1>;
+   reg = <0x10014000 0x1000 0x20000000 0x20000000>;
+   reg-names = "control", "mem";
+   status = "disabled";
+   #address-cells = <1>;
+   #size-cells = <0>;
+  };
+
+  spi1: spi@10024000 {
+   compatible = "sifive,spi0";
+   interrupt-parent = <&plic>;
+   interrupts = <6 1>;
+   reg = <0x10024000 0x1000>;
+   reg-names = "control";
+   status = "disabled";
+   #address-cells = <1>;
+   #size-cells = <0>;
+  };
+
+  spi2: spi@10034000 {
+   compatible = "sifive,spi0";
+   interrupt-parent = <&plic>;
+   interrupts = <7 1>;
+   reg = <0x10034000 0x1000>;
+   reg-names = "control";
+   status = "disabled";
+   #address-cells = <1>;
+   #size-cells = <0>;
+  };
+
+  teststatus: teststatus@4000 {
+   compatible = "sifive,test0";
+   reg = <0x4000 0x1000>;
+   reg-names = "control";
+  };
+ };
+};
+# 7 "/home/ubuntu/work/gem5/gem5_riscv_rt/src/zephyr/zephyr/boards/sifive/hifive1/hifive1.dts" 2
+# 1 "/home/ubuntu/work/gem5/gem5_riscv_rt/src/zephyr/zephyr/include/zephyr/dt-bindings/gpio/arduino-header-r3.h" 1 3 4
+# 8 "/home/ubuntu/work/gem5/gem5_riscv_rt/src/zephyr/zephyr/boards/sifive/hifive1/hifive1.dts" 2
+# 1 "/home/ubuntu/work/gem5/gem5_riscv_rt/src/zephyr/zephyr/include/zephyr/dt-bindings/i2c/i2c.h" 1 3 4
+# 9 "/home/ubuntu/work/gem5/gem5_riscv_rt/src/zephyr/zephyr/boards/sifive/hifive1/hifive1.dts" 2
+# 1 "/home/ubuntu/work/gem5/gem5_riscv_rt/src/zephyr/zephyr/boards/sifive/hifive1/hifive1-pinctrl.dtsi" 1
+
+
+
+
+
+
+# 1 "/home/ubuntu/work/gem5/gem5_riscv_rt/src/zephyr/zephyr/include/zephyr/dt-bindings/pinctrl/sifive-pinctrl.h" 1 3 4
+# 8 "/home/ubuntu/work/gem5/gem5_riscv_rt/src/zephyr/zephyr/boards/sifive/hifive1/hifive1-pinctrl.dtsi" 2
+
+&pinctrl {
+
+ uart0_rx_default: uart0_rx_default {
+  pinmux = <16 0x00>;
+ };
+
+ uart0_tx_default: uart0_tx_default {
+  pinmux = <17 0x00>;
+ };
+
+
+ spi1_cs0_default: spi1_cs0_default {
+  pinmux = <2 0x00>;
+ };
+
+ spi1_mosi_default: spi1_mosi_default {
+  pinmux = <3 0x00>;
+ };
+
+ spi1_miso_default: spi1_miso_default {
+  pinmux = <4 0x00>;
+ };
+
+ spi1_sck_default: spi1_sck_default {
+  pinmux = <5 0x00>;
+ };
+
+ spi1_cs2_default: spi1_cs2_default {
+  pinmux = <9 0x00>;
+ };
+
+ spi1_cs3_default: spi1_cs3_default {
+  pinmux = <10 0x00>;
+ };
+
+
+ pwm0_0_default: pwm0_0_default {
+  pinmux = <0 0x01>;
+ };
+
+ pwm0_1_default: pwm0_1_default {
+  pinmux = <1 0x01>;
+ };
+
+ pwm0_2_default: pwm0_2_default {
+  pinmux = <2 0x01>;
+ };
+
+ pwm0_3_default: pwm0_3_default {
+  pinmux = <3 0x01>;
+ };
+
+
+ pwm1_0_default: pwm1_0_default {
+  pinmux = <20 0x01>;
+ };
+
+ pwm1_1_default: pwm1_1_default {
+  pinmux = <19 0x01>;
+ };
+
+ pwm1_2_default: pwm1_2_default {
+  pinmux = <21 0x01>;
+ };
+
+ pwm1_3_default: pwm1_3_default {
+  pinmux = <22 0x01>;
+ };
+
+
+ pwm2_0_default: pwm2_0_default {
+  pinmux = <10 0x01>;
+ };
+
+ pwm2_1_default: pwm2_1_default {
+  pinmux = <11 0x01>;
+ };
+
+ pwm2_2_default: pwm2_2_default {
+  pinmux = <12 0x01>;
+ };
+
+ pwm2_3_default: pwm2_3_default {
+  pinmux = <13 0x01>;
+ };
+
+
+ i2c0_0_default: i2c0_0_default {
+  pinmux = <12 0x00>;
+ };
+
+ i2c0_1_default: i2c0_1_default {
+  pinmux = <13 0x00>;
+ };
+};
+# 10 "/home/ubuntu/work/gem5/gem5_riscv_rt/src/zephyr/zephyr/boards/sifive/hifive1/hifive1.dts" 2
+
+/ {
+ model = "SiFive HiFive 1";
+ compatible = "sifive,hifive1";
+
+ aliases {
+  led0 = &led0;
+  led1 = &led1;
+  led2 = &led2;
+  pwm-led0 = &pwmled0;
+  pwm-led1 = &pwmled1;
+  pwm-led2 = &pwmled2;
+  watchdog0 = &wdog0;
+ };
+
+ chosen {
+  zephyr,console = &uart0;
+  zephyr,shell-uart = &uart0;
+  zephyr,sram = &dtim;
+  zephyr,flash = &flash0;
+ };
+
+ leds {
+  compatible = "gpio-leds";
+
+  led0: led_0 {
+   gpios = <&gpio0 19 (1 << 0)>;
+   label = "Green LED";
+  };
+
+  led1: led_1 {
+   gpios = <&gpio0 21 (1 << 0)>;
+   label = "Blue LED";
+  };
+
+  led2: led_2 {
+   gpios = <&gpio0 22 (1 << 0)>;
+   label = "Red LED";
+  };
+ };
+
+ pwmleds {
+  compatible = "pwm-leds";
+
+  pwmled0: pwmled_0 {
+   pwms = <&pwm1 1 (((20) * 1000UL) * 1000UL)>;
+   label = "Green LED";
+  };
+
+  pwmled1: pwmled_1 {
+   pwms = <&pwm1 2 (((20) * 1000UL) * 1000UL)>;
+   label = "Blue LED";
+  };
+
+  pwmled2: pwmled_2 {
+   pwms = <&pwm1 3 (((20) * 1000UL) * 1000UL)>;
+   label = "Red LED";
+  };
+ };
+
+ arduino_header: connector {
+  compatible = "arduino-header-r3";
+  #gpio-cells = <2>;
+  gpio-map-mask = <0xffffffff 0xffffffc0>;
+  gpio-map-pass-thru = <0 0x3f>;
+  gpio-map =
+      <1 0 &gpio0 9 0>,
+      <2 0 &gpio0 10 0>,
+      <3 0 &gpio0 11 0>,
+      <4 0 &gpio0 12 0>,
+      <5 0 &gpio0 13 0>,
+      <6 0 &gpio0 16 0>,
+      <7 0 &gpio0 17 0>,
+      <8 0 &gpio0 18 0>,
+      <9 0 &gpio0 19 0>,
+      <10 0 &gpio0 20 0>,
+      <11 0 &gpio0 21 0>,
+      <12 0 &gpio0 22 0>,
+      <13 0 &gpio0 23 0>,
+      <14 0 &gpio0 0 0>,
+      <15 0 &gpio0 1 0>,
+      <16 0 &gpio0 2 0>,
+      <17 0 &gpio0 3 0>,
+      <18 0 &gpio0 4 0>,
+      <19 0 &gpio0 5 0>,
+      <20 0 &gpio0 12 0>,
+      <21 0 &gpio0 13 0>;
+ };
+};
+
+&gpio0 {
+ status = "okay";
+};
+
+&uart0 {
+ status = "okay";
+ current-speed = <115200>;
+ pinctrl-0 = <&uart0_rx_default &uart0_tx_default>;
+ pinctrl-names = "default";
+};
+
+
+&spi0 {
+ reg = <0x10014000 0x1000 0x20400000 0xc00000>;
+
+ flash0: flash@0 {
+  compatible = "issi,is25lp128", "jedec,spi-nor";
+  status = "disabled";
+  size = <134217728>;
+  jedec-id = [96 60 18];
+  reg = <0>;
+  spi-max-frequency = <133000000>;
+ };
+};
+
+&spi1 {
+ status = "okay";
+ pinctrl-0 = <&spi1_cs0_default &spi1_cs2_default &spi1_cs3_default
+       &spi1_mosi_default &spi1_miso_default &spi1_sck_default>;
+ pinctrl-names = "default";
+};
+
+&spi2 {
+ status = "okay";
+};
+
+&pwm0 {
+ status = "okay";
+};
+
+&pwm1 {
+ status = "okay";
+ pinctrl-0 = <&pwm1_1_default &pwm1_2_default &pwm1_3_default>;
+ pinctrl-names = "default";
+};
+
+&pwm2 {
+ status = "okay";
+ pinctrl-0 = <&pwm2_1_default &pwm2_2_default &pwm2_3_default>;
+ pinctrl-names = "default";
+};
+
+arduino_i2c: &i2c0 {
+ status = "okay";
+ clock-frequency = <100000>;
+ pinctrl-0 = <&i2c0_0_default &i2c0_1_default>;
+ pinctrl-names = "default";
+};
+# 0 "<command-line>" 2
+# 1 "./gem5_amp_core1.overlay" 1
+/ {
+    soc {
+        sram0: memory@90100000 {
+            compatible = "mmio-sram";
+            reg = <0x90100000 0x100000>;
+        };
+
+        uart_gem5_1: serial@10011000 {
+            compatible = "ns16550";
+            reg = <0x10011000 0x100>;
+            status = "okay";
+            current-speed = <115200>;
+            label = "UART_1";
+            reg-shift = <0>;
+            clock-frequency = <100000000>;
+            interrupt-parent = <&plic>;
+            interrupts = <11 1>;
+        };
+    };
+
+    chosen {
+        zephyr,sram = &sram0;
+        zephyr,console = &uart_gem5_1;
+        zephyr,shell-uart = &uart_gem5_1;
+    };
+};
+
+
+
+&pwm0 { status = "disabled"; };
+&pwm1 { status = "disabled"; };
+&pwm2 { status = "disabled"; };
+&gpio0 { status = "disabled"; };
+&spi0 { status = "disabled"; };
+&spi1 { status = "disabled"; };
+&spi2 { status = "disabled"; };
+&wdog0 { status = "disabled"; };
+# 0 "<command-line>" 2
+# 1 "/home/ubuntu/work/gem5/gem5_riscv_rt/src/zephyr/zephyr/misc/empty_file.c"

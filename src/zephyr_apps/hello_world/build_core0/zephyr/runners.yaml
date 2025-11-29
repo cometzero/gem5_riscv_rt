@@ -1,0 +1,57 @@
+# Available runners configured by board.cmake.
+runners:
+- hifive1
+- openocd
+- renode
+- renode-robot
+
+# Default flash runner if --runner is not given.
+flash-runner: hifive1
+
+# Default debug runner if --runner is not given.
+debug-runner: openocd
+
+# Default simulation runner if --runner is not given.
+sim-runner: renode
+
+# Default test runner if --runner is not given.
+robot-runner: renode-robot
+
+# Common runner configuration values.
+config:
+  board_dir: /home/ubuntu/work/gem5/gem5_riscv_rt/src/zephyr/zephyr/boards/sifive/hifive1
+  # Build outputs:
+  elf_file: zephyr.elf
+  hex_file: zephyr.hex
+  bin_file: zephyr.bin
+  # Host tools:
+  gdb: /home/ubuntu/zephyr-sdk-0.16.8/riscv64-zephyr-elf/bin/riscv64-zephyr-elf-gdb
+  openocd: /home/ubuntu/zephyr-sdk-0.16.8/sysroots/x86_64-pokysdk-linux/usr/bin/openocd
+  openocd_search:
+    - /home/ubuntu/zephyr-sdk-0.16.8/sysroots/x86_64-pokysdk-linux/usr/share/openocd/scripts
+
+# Runner specific arguments
+args:
+  hifive1:
+    []
+
+  openocd:
+    - --cmd-load
+    - flash write_image erase
+    - --cmd-verify
+    - verify_image
+    - --cmd-load
+    - hifive1-load
+    - --cmd-reset-halt
+    - hifive1-reset-halt
+    - --cmd-post-verify
+    - hifive1-post-verify
+  renode:
+    - --renode-command=$elf=@/home/ubuntu/work/gem5/gem5_riscv_rt/src/zephyr_apps/hello_world/build_core0/zephyr/zephyr.elf
+    - --renode-command=include @/home/ubuntu/work/gem5/gem5_riscv_rt/src/zephyr/zephyr/boards/sifive/hifive1/support/hifive1.resc
+  renode-robot:
+    - --renode-robot-arg=--variable=ELF:@/home/ubuntu/work/gem5/gem5_riscv_rt/src/zephyr_apps/hello_world/build_core0/zephyr/zephyr.elf
+    - --renode-robot-arg=--variable=RESC:@/home/ubuntu/work/gem5/gem5_riscv_rt/src/zephyr/zephyr/boards/sifive/hifive1/support/hifive1.resc
+    - --renode-robot-arg=--variable=UART:sysbus.uart0
+    - --renode-robot-arg=--variable=KEYWORDS:/home/ubuntu/work/gem5/gem5_riscv_rt/src/zephyr/zephyr/tests/robot/common.robot
+    - --renode-robot-arg=--variable=RESULTS_DIR:/home/ubuntu/work/gem5/gem5_riscv_rt/src/zephyr_apps/hello_world/build_core0
