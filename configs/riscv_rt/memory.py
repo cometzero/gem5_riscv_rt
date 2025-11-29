@@ -108,3 +108,44 @@ def create_memory_system(system, membus, mem_type="dram"):
     ]
     
     return system
+
+def create_core_memory(core_idx, membus, sram_base, mram_base, mem_type="mram", image_file=None):
+    """
+    Create dedicated SRAM and MRAM for a specific core.
+    
+    Args:
+        core_idx: Index of the core (0-3)
+        membus: The system memory bus
+        sram_base: Base address for SRAM
+        mram_base: Base address for MRAM
+        mem_type: "dram" or "mram" (default mram)
+        image_file: Optional path to binary to load into SRAM
+        
+    Returns:
+        Tuple of (sram_obj, mram_ctrl_obj)
+    """
+    
+    # SRAM: 1MB per core
+    sram_size = "1MB"
+    sram_addr = sram_base + (core_idx * 0x100000) # 1MB offset
+    
+    sram = SimpleMemory(range=AddrRange(sram_addr, size=sram_size),
+                        latency="1ns",
+                        bandwidth="10GB/s")
+    
+    if image_file:
+        sram.image_file = image_file
+        
+    sram.port = membus.mem_side_ports
+    
+    # MRAM: 2MB per core
+    mram_size = "2MB"
+    mram_addr = mram_base + (core_idx * 0x200000) # 2MB offset
+    
+    # Use SimpleMemory for MRAM to avoid MemCtrl crash
+    mram = SimpleMemory(range=AddrRange(mram_addr, size=mram_size),
+                        latency="30ns", # Approximate MRAM latency
+                        bandwidth="100MB/s")
+    mram.port = membus.mem_side_ports
+    
+    return sram, mram

@@ -28,6 +28,7 @@ from common import Options
 from common import Simulation
 from common.Caches import *
 from ruby import Ruby
+from configs.riscv_rt.QuadHiFive import QuadHiFive
 
 class L1ICache(Cache):
     """L1 Instruction Cache - 32 KB"""
@@ -61,7 +62,7 @@ class L2Cache(Cache):
 
 from configs.riscv_rt import memory
 
-def create_system(args):
+def create_system(args, kernels):
     """Create the full-system configuration"""
     
     # Create base system
@@ -76,43 +77,95 @@ def create_system(args):
     # Handled by memory.py
     system.mem_mode = "timing"
     
-    # Memory configuration
-    system.mem_mode = "timing"
-
-    # Create RISC-V 32-bit CPU
-    # Use TimingSimpleCPU for Ruby compatibility/debugging
-    system.cpu = [TimingSimpleCPU()]
-    system.cpu[0].clk_domain = system.clk_domain
+    # Create HiFive platform for UART and peripherals
+    system.platform = QuadHiFive()
+    
+    # RTCCLK (Set to 100MHz for faster simulation)
+    system.platform.rtc = RiscvRTC(frequency=Frequency("100MHz"))
+    system.platform.clint.int_pin = system.platform.rtc.int_pin
     
     if args.mem_system == "classic":
         # Create memory bus and IO bus
         system.membus = SystemXBar()
         system.iobus = IOXBar()
-        
+    
+    # Attach Platform IO
+    system.platform.attachOnChipIO(system.membus)
+    system.platform.attachOffChipIO(system.iobus)
+    system.platform.attachPlic()
+    system.platform.setNumCores(4)
+    
+    # 2. Create CPUs (4 Cores)
+    system.cpu = [TimingSimpleCPU() for _ in range(4)]
+    
+    if args.mem_system == "classic":
         # Setup memory objects
         system = memory.create_memory_system(system, system.membus, args.mem_tech)
-        
-        # Create L1 caches
-        system.cpu[0].icache = L1ICache()
-        system.cpu[0].dcache = L1DCache()
-        
-        # Connect L1 caches to CPU
-        system.cpu[0].icache.cpu_side = system.cpu[0].icache_port
-        system.cpu[0].dcache.cpu_side = system.cpu[0].dcache_port
         
         # Create L2 cache bus
         system.l2bus = L2XBar()
         
-        # Connect L1 caches to L2 bus
-        system.cpu[0].icache.mem_side = system.l2bus.cpu_side_ports
-        system.cpu[0].dcache.mem_side = system.l2bus.cpu_side_ports
-        
+        # Create L1 caches and connect
+        for i, cpu in enumerate(system.cpu):
+            cpu.icache = L1ICache()
+            cpu.dcache = L1DCache()
+            
+            cpu.icache.cpu_side = cpu.icache_port
+            cpu.dcache.cpu_side = cpu.dcache_port
+            
+            # Connect to L2 bus
+            cpu.icache.mem_side = system.l2bus.cpu_side_ports
+            cpu.dcache.mem_side = system.l2bus.cpu_side_ports
+            
         # Create L2 cache
         system.l2cache = L2Cache()
         system.l2cache.cpu_side = system.l2bus.mem_side_ports
         
         # Connect L2 cache to memory bus
         system.l2cache.mem_side = system.membus.cpu_side_ports
+        
+        # Create Dedicated Memory (4 Cores)
+        sram_base = 0x90000000
+        mram_base = 0xA0000000
+        
+        for i in range(4):
+            sram, mram = memory.create_core_memory(i, system.membus, sram_base, mram_base, args.mem_tech, image_file=kernels[i])
+            setattr(system, f"core_{i}_sram", sram)
+            setattr(system, f"core_{i}_mram", mram)
+            
+            system.mem_ranges.append(sram.range)
+            system.mem_ranges.append(mram.range)
+            
+        # Ghost Memory for AON/PRCI (0x10000000 - 0x10010000)
+        # Zephyr accesses this during boot for clock setup/watchdog
+        system.aon_ghost = SimpleMemory(range=AddrRange(0x10000000, size="64kB"),
+                                        latency="10ns")
+        system.aon_ghost.port = system.membus.mem_side_ports
+
+        # Ghost Memory for 0x8ffff000 (likely stack/ELF alignment issue)
+        system.ghost_memory = SimpleMemory(range=AddrRange(0x8ffff000, size="4kB"),
+                                           latency="10ns")
+        system.ghost_memory.port = system.membus.mem_side_ports
+        system.mem_ranges.append(system.ghost_memory.range)
+
+        system.ghost_memory_2 = SimpleMemory(range=AddrRange(0x7ffff000, size="4kB"),
+                                           latency="10ns")
+        system.ghost_memory_2.port = system.membus.mem_side_ports
+        system.mem_ranges.append(system.ghost_memory_2.range)
+
+        # Ghost Memory for Peripheral Gap (0x10040000 - 0x20000000)
+        # Covers 0x1417fe00
+        system.gap_ghost_1 = SimpleMemory(range=AddrRange(0x10040000, size="255MB"),
+                                          latency="100ns")
+        system.gap_ghost_1.port = system.membus.mem_side_ports
+        system.mem_ranges.append(system.gap_ghost_1.range)
+
+        # Ghost Memory for Flash Gap (0x22000000 - 0x62000000)
+        # Covers 0x2414e000. Starts after system.flash (0x20000000 + 32MB)
+        system.gap_ghost_2 = SimpleMemory(range=AddrRange(0x22000000, size="1024MB"),
+                                          latency="100ns")
+        system.gap_ghost_2.port = system.membus.mem_side_ports
+        system.mem_ranges.append(system.gap_ghost_2.range)
         
     else:
         # Ruby System
@@ -141,19 +194,13 @@ def create_system(args):
     # Create interrupt controller
     for cpu in system.cpu:
         cpu.createInterruptController()
+        cpu.clk_domain = system.clk_domain # Set clock domain here
         
         # Configure for RV32
         cpu.ArchISA.riscv_type = "RV32"
         
         # Create CPU threads
         cpu.createThreads()
-    
-    # Create HiFive platform for UART and peripherals
-    system.platform = HiFive()
-    
-    # RTCCLK (Set to 100MHz for faster simulation)
-    system.platform.rtc = RiscvRTC(frequency=Frequency("100MHz"))
-    system.platform.clint.int_pin = system.platform.rtc.int_pin
     
     # Connect platform PCI to IO bus
     system.platform.pci_host.pio = system.iobus.mem_side_ports
@@ -166,8 +213,8 @@ def create_system(args):
         system.bridge.ranges = system.platform._off_chip_ranges()
         
         # Attach platform devices
-        system.platform.attachOnChipIO(system.membus)
-        system.platform.attachOffChipIO(system.iobus)
+        # system.platform.attachOnChipIO(system.membus)
+        # system.platform.attachOffChipIO(system.iobus)
         
         # Create system port for functional access
         system.system_port = system.membus.cpu_side_ports
@@ -206,8 +253,8 @@ def main():
     # Add Ruby options
     Ruby.define_options(parser)
     
-    parser.add_argument("--kernel", type=str, required=True,
-                        help="Path to kernel/bare-metal binary (ELF)")
+    parser.add_argument("--kernels", type=str, required=True,
+                        help="Comma-separated list of 4 kernel binaries")
     parser.add_argument("--max-ticks", type=int, default=None,
                         help="Maximum simulation ticks")
     
@@ -218,26 +265,31 @@ def main():
     parser.add_argument("--mem-system", default="classic", choices=["classic", "ruby"],
                         help="Memory system type")
     
+    parser.add_argument("--bootloader", type=str, default=None,
+                        help="Bootloader ELF file")
+    
     args = parser.parse_args()
     
+    kernels = args.kernels.split(',')
+    if len(kernels) != 4:
+        print("Error: Must provide exactly 4 kernels")
+        sys.exit(1)
+    
     # Create system
-    system = create_system(args)
+    system = create_system(args, kernels)
     
     # Set workload
     # For bare-metal with bootloader: boot ROM at 0x0 jumps to kernel at 0x80000000
     # For Zephyr: boot directly to kernel at 0x80000000
     system.workload = RiscvBareMetal()
     
-    bootloader_path = Path(args.kernel).parent / "boot.elf"
-    if bootloader_path.exists():
-        # Bare-metal mode with bootloader
-        system.workload.bootloader = str(bootloader_path)
-        system.workload.auto_reset_vect = False
-        system.workload.reset_vect = 0x0  # Start at boot ROM
+    if args.bootloader:
+        system.workload.bootloader = args.bootloader
     else:
-        # Zephyr mode - boot directly to kernel
-        system.workload.bootloader = args.kernel
-        system.workload.auto_reset_vect = True  # Use entry point from ELF
+        # Use Core 0 kernel as the main bootloader for the system
+        system.workload.bootloader = kernels[0]
+        
+    system.workload.auto_reset_vect = True
     
     # Create root object
     root = Root(full_system=True, system=system)
@@ -246,7 +298,7 @@ def main():
     m5.instantiate()
     
     print(f"Beginning simulation")
-    print(f"Kernel: {args.kernel}")
+    print(f"Kernels: {args.kernels}")
     print(f"CPU: RV32 MinorCPU @ 500 MHz")
     print(f"L1-I: 32 KB, L1-D: 32 KB, L2: 256 KB")
     print(f"Memory: 128 MB DRAM")
