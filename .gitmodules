@@ -1,3 +1,4 @@
 [submodule "src/gem5"]
 	path = src/gem5
-	url = https://github.com/gem5/gem5.git
+	url = https://github.com/cometzero/gem5
+	branch = quad-core-uart-fix
