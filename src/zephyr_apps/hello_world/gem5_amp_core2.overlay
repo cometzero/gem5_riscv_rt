@@ -20,6 +20,7 @@
 
     chosen {
         zephyr,sram = &sram0;
+        zephyr,flash = &sram0;
         zephyr,console = &uart_gem5_2;
         zephyr,shell-uart = &uart_gem5_2;
     };
