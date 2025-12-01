@@ -49,3 +49,4 @@ m5out/
 # Zephyr RTOS source (managed by west)
 src/zephyr/
 build_*/
+src/bootloader/bootloader.elf
