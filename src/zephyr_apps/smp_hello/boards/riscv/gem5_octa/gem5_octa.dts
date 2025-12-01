@@ -1,0 +1,222 @@
+/* SPDX-License-Identifier: Apache-2.0 */
+
+/dts-v1/;
+
+#include <zephyr/dt-bindings/gpio/gpio.h>
+#include <zephyr/dt-bindings/pwm/pwm.h>
+#include <freq.h>
+
+/ {
+	#address-cells = <1>;
+	#size-cells = <1>;
+	compatible = "sifive,FE310G-0002-Z0-dev", "fe310-dev", "sifive-dev";
+	model = "gem5 Octa-Core";
+
+	clocks {
+		coreclk: core-clk {
+			#clock-cells = <0>;
+			compatible = "fixed-clock";
+			clock-frequency = <DT_FREQ_M(320)>;
+		};
+
+		tlclk: tl-clk {
+			#clock-cells = <0>;
+			compatible = "fixed-factor-clock";
+			clocks = <&coreclk>;
+			clock-div = <1>;
+		};
+	};
+
+	cpus {
+		#address-cells = <1>;
+		#size-cells = <0>;
+
+		cpu0: cpu@0 {
+			compatible = "sifive,e31", "riscv";
+			device_type = "cpu";
+			reg = <0>;
+			riscv,isa = "rv32imac_zicsr_zifencei";
+			status = "disabled";
+			hlic0: interrupt-controller {
+				compatible = "riscv,cpu-intc";
+				#address-cells = <0>;
+				#interrupt-cells = <1>;
+				interrupt-controller;
+			};
+		};
+        
+        cpu1: cpu@1 {
+			compatible = "sifive,e31", "riscv";
+			device_type = "cpu";
+			reg = <1>;
+			riscv,isa = "rv32imac_zicsr_zifencei";
+			status = "disabled";
+			hlic1: interrupt-controller {
+				compatible = "riscv,cpu-intc";
+				#address-cells = <0>;
+				#interrupt-cells = <1>;
+				interrupt-controller;
+			};
+		};
+        
+        cpu2: cpu@2 {
+			compatible = "sifive,e31", "riscv";
+			device_type = "cpu";
+			reg = <2>;
+			riscv,isa = "rv32imac_zicsr_zifencei";
+			status = "disabled";
+			hlic2: interrupt-controller {
+				compatible = "riscv,cpu-intc";
+				#address-cells = <0>;
+				#interrupt-cells = <1>;
+				interrupt-controller;
+			};
+		};
+        
+        cpu3: cpu@3 {
+			compatible = "sifive,e31", "riscv";
+			device_type = "cpu";
+			reg = <3>;
+			riscv,isa = "rv32imac_zicsr_zifencei";
+			status = "disabled";
+			hlic3: interrupt-controller {
+				compatible = "riscv,cpu-intc";
+				#address-cells = <0>;
+				#interrupt-cells = <1>;
+				interrupt-controller;
+			};
+		};
+        
+        cpu4: cpu@4 {
+			compatible = "sifive,e31", "riscv";
+			device_type = "cpu";
+			reg = <4>;
+			riscv,isa = "rv32imac_zicsr_zifencei";
+			status = "okay";
+			hlic4: interrupt-controller {
+				compatible = "riscv,cpu-intc";
+				#address-cells = <0>;
+				#interrupt-cells = <1>;
+				interrupt-controller;
+			};
+		};
+        
+        cpu5: cpu@5 {
+			compatible = "sifive,e31", "riscv";
+			device_type = "cpu";
+			reg = <5>;
+			riscv,isa = "rv32imac_zicsr_zifencei";
+			status = "okay";
+			hlic5: interrupt-controller {
+				compatible = "riscv,cpu-intc";
+				#address-cells = <0>;
+				#interrupt-cells = <1>;
+				interrupt-controller;
+			};
+		};
+        
+        cpu6: cpu@6 {
+			compatible = "sifive,e31", "riscv";
+			device_type = "cpu";
+			reg = <6>;
+			riscv,isa = "rv32imac_zicsr_zifencei";
+			status = "okay";
+			hlic6: interrupt-controller {
+				compatible = "riscv,cpu-intc";
+				#address-cells = <0>;
+				#interrupt-cells = <1>;
+				interrupt-controller;
+			};
+		};
+        
+        cpu7: cpu@7 {
+			compatible = "sifive,e31", "riscv";
+			device_type = "cpu";
+			reg = <7>;
+			riscv,isa = "rv32imac_zicsr_zifencei";
+			status = "okay";
+			hlic7: interrupt-controller {
+				compatible = "riscv,cpu-intc";
+				#address-cells = <0>;
+				#interrupt-cells = <1>;
+				interrupt-controller;
+			};
+		};
+	};
+
+	soc {
+		#address-cells = <1>;
+		#size-cells = <1>;
+		compatible = "sifive,FE310G-0002-Z0-soc", "fe310-soc",
+			     "sifive-soc", "simple-bus";
+		ranges;
+
+		clint: clint@2000000 {
+			compatible = "sifive,clint0";
+			interrupts-extended = <&hlic0 3 &hlic0 7
+                                   &hlic1 3 &hlic1 7
+                                   &hlic2 3 &hlic2 7
+                                   &hlic3 3 &hlic3 7
+                                   &hlic4 3 &hlic4 7
+                                   &hlic5 3 &hlic5 7
+                                   &hlic6 3 &hlic6 7
+                                   &hlic7 3 &hlic7 7>;
+			reg = <0x2000000 0x10000>;
+		};
+
+		mtimer: timer@200bff8 {
+			compatible = "riscv,machine-timer";
+			interrupts-extended = <&hlic0 7 &hlic1 7 &hlic2 7 &hlic3 7 &hlic4 7 &hlic5 7 &hlic6 7 &hlic7 7>;
+			reg = <0x200bff8 0x8 0x2004000 0x40>;
+			reg-names = "mtime", "mtimecmp";
+		};
+
+		plic: interrupt-controller@c000000 {
+			compatible = "sifive,plic-1.0.0";
+			#address-cells = <0>;
+			#interrupt-cells = <2>;
+			interrupt-controller;
+			interrupts-extended = <&hlic0 11
+                                   &hlic1 11
+                                   &hlic2 11
+                                   &hlic3 11
+                                   &hlic4 11
+                                   &hlic5 11
+                                   &hlic6 11
+                                   &hlic7 11>;
+			reg = <0x0c000000 0x04000000>;
+			riscv,max-priority = <7>;
+			riscv,ndev = <52>;
+		};
+
+		dtim: dtim@90400000 {
+			compatible = "sifive,dtim0";
+			reg = <0x90400000 0x400000>;
+			reg-names = "mem";
+		};
+        
+        flash0: flash@80000000 {
+            compatible = "soc-nv-flash";
+            reg = <0x80000000 0x800000>;
+        };
+
+		uart4: serial@10014000 {
+			compatible = "ns16550";
+			reg = <0x10014000 0x100>;
+			reg-shift = <0>;
+			interrupt-parent = <&plic>;
+			interrupts = <14 1>;
+			status = "okay";
+			current-speed = <115200>;
+			clock-frequency = <100000000>;
+            label = "UART_4";
+		};
+	};
+    
+    chosen {
+		zephyr,console = &uart4;
+		zephyr,shell-uart = &uart4;
+		zephyr,sram = &dtim;
+		zephyr,flash = &flash0;
+	};
+};
