@@ -53,7 +53,7 @@ class STTMRAM(NVMInterface):
     # STT-MRAM Latencies (Asymmetric)
     # Read is faster than Write
 
-def create_memory_system(system, membus, mem_type="dram"):
+def create_memory_system(system, membus, mem_type="dram", create_default_ram=True):
     """
     Create the memory objects and attach them to the memory bus.
     
@@ -61,6 +61,7 @@ def create_memory_system(system, membus, mem_type="dram"):
         system: The gem5 System object
         membus: The system memory bus (SystemXBar)
         mem_type: "dram" or "mram"
+        create_default_ram: Whether to create default SRAM and Main Memory
     """
     
     # 1. Boot ROM (0x0 - 0x10000)
@@ -69,43 +70,45 @@ def create_memory_system(system, membus, mem_type="dram"):
                                    latency="10ns")
     system.boot_rom.port = membus.mem_side_ports
     
-    # 2. NOR Flash (0x20000000 - 0x22000000)
+    # 2. NOR Flash (0x20000000 - 0x40000000)
     # Used for XIP boot or storage
-    system.flash = SimpleMemory(range=AddrRange(0x20000000, size="32MB"),
+    system.flash = SimpleMemory(range=AddrRange(0x20000000, size="512MB"),
                                 latency="100ns",
                                 bandwidth="100MB/s")
     system.flash.port = membus.mem_side_ports
     
-    # 3. SRAM (0x80000000 - 0x80200000)
-    # Fast on-chip memory for critical code/data
-    system.sram = SimpleMemory(range=AddrRange(0x80000000, size="2MB"),
-                               latency="1ns",
-                               bandwidth="10GB/s")
-    system.sram.port = membus.mem_side_ports
-    
-    # 4. Main Memory (0x80200000 - 0x88000000)
-    # DRAM or STT-MRAM
-    dram_range = AddrRange(0x80200000, size="126MB")
-    
-    system.mem_ctrl = MemCtrl()
-    
-    if mem_type == "dram":
-        # Standard DDR3
-        system.mem_ctrl.dram = DDR3_1600_8x8()
-    elif mem_type == "mram":
-        # STT-MRAM Model
-        system.mem_ctrl.dram = STTMRAM()
-        
-    system.mem_ctrl.dram.range = dram_range
-    system.mem_ctrl.port = membus.mem_side_ports
-    
     # Set system memory ranges for Ruby/System checks
     system.mem_ranges = [
         system.boot_rom.range,
-        system.flash.range,
-        system.sram.range,
-        dram_range
+        system.flash.range
     ]
+
+    if create_default_ram:
+        # 3. SRAM (0x80000000 - 0x80200000)
+        # Fast on-chip memory for critical code/data
+        system.sram = SimpleMemory(range=AddrRange(0x80000000, size="2MB"),
+                                   latency="1ns",
+                                   bandwidth="10GB/s")
+        system.sram.port = membus.mem_side_ports
+        
+        # 4. Main Memory (0x80200000 - 0x88000000)
+        # DRAM or STT-MRAM
+        dram_range = AddrRange(0x80200000, size="126MB")
+        
+        system.mem_ctrl = MemCtrl()
+        
+        if mem_type == "dram":
+            # Standard DDR3
+            system.mem_ctrl.dram = DDR3_1600_8x8()
+        elif mem_type == "mram":
+            # STT-MRAM Model
+            system.mem_ctrl.dram = STTMRAM()
+            
+        system.mem_ctrl.dram.range = dram_range
+        system.mem_ctrl.port = membus.mem_side_ports
+        
+        system.mem_ranges.append(system.sram.range)
+        system.mem_ranges.append(dram_range)
     
     return system
 
@@ -146,6 +149,42 @@ def create_core_memory(core_idx, membus, sram_base, mram_base, mem_type="mram", 
     mram = SimpleMemory(range=AddrRange(mram_addr, size=mram_size),
                         latency="30ns", # Approximate MRAM latency
                         bandwidth="100MB/s")
+    mram.port = membus.mem_side_ports
+    
+    return sram, mram
+
+def create_cluster_memory(cluster_id, membus, sram_base, mram_base, sram_size="4MB", mram_size="8MB", image_file=None):
+    """
+    Create shared SRAM and MRAM for a cluster of cores.
+    
+    Args:
+        cluster_id: ID of the cluster (for naming)
+        membus: The system memory bus
+        sram_base: Base address for shared SRAM
+        mram_base: Base address for shared MRAM
+        sram_size: Size of shared SRAM
+        mram_size: Size of shared MRAM
+        image_file: Optional path to binary to load into shared SRAM
+        
+    Returns:
+        Tuple of (sram_obj, mram_obj)
+    """
+    
+    # Shared SRAM
+    sram = SimpleMemory(range=AddrRange(sram_base, size=sram_size),
+                        latency="1ns",
+                        bandwidth="10GB/s")
+    
+    if image_file:
+        sram.image_file = image_file
+        
+    sram.port = membus.mem_side_ports
+    
+    # Shared MRAM
+    mram = SimpleMemory(range=AddrRange(mram_base, size=mram_size),
+                        latency="30ns",
+                        bandwidth="100MB/s")
+    
     mram.port = membus.mem_side_ports
     
     return sram, mram
