@@ -1,2 +1,0 @@
-# Load Sysbuild board Kconfig descriptions.
-osource "/home/ubuntu/work/gem5/gem5_riscv_rt/src/zephyr/zephyr/boards/sifive/hifive1/Kconfig.sysbuild"

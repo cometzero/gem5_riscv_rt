@@ -48,3 +48,4 @@ m5out/
 
 # Zephyr RTOS source (managed by west)
 src/zephyr/
+build_*/

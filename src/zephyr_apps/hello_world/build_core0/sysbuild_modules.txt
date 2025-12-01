@@ -1,1 +1,0 @@
-"mcuboot":"/home/ubuntu/work/gem5/gem5_riscv_rt/src/zephyr/bootloader/mcuboot":"/home/ubuntu/work/gem5/gem5_riscv_rt/src/zephyr/bootloader/mcuboot/boot/zephyr/sysbuild"
