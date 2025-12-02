@@ -17,9 +17,9 @@ This feature expands the existing Quad-Core AMP system into an Octa-Core (8-core
     - **User** verifies output from all 5 contexts (4 AMP + 1 SMP Shared Console).
 
 - **Scenario 2: SMP Performance Analysis**
-    - **User** runs a PARSEC benchmark on Cluster 1.
+    - **User** runs the SMP Synchronization Sample on Cluster 1.
     - **System** utilizes all 4 cores in Cluster 1 with cache coherency.
-    - **User** observes speedup or synchronization behavior compared to single-core execution.
+    - **User** observes successful synchronization and data sharing across cores.
 
 ## 4. Functional Requirements
 
@@ -48,7 +48,8 @@ This feature expands the existing Quad-Core AMP system into an Octa-Core (8-core
     - **Core 5-7 (SMP Secondary)**: Park in `wfi` loop, waiting for wake-up signal (IPI/HSM).
 - **Workloads**:
     - **Basic**: "Hello World" on all contexts.
-    - **Advanced**: PARSEC benchmark (or equivalent multi-threaded workload) on Cluster 1.
+    - **Verification**: Zephyr SMP Synchronization Sample (`samples/synchronization`) on Cluster 1.
+    - **Advanced (Future)**: PARSEC benchmark (or equivalent multi-threaded workload) on Cluster 1.
 
 ### 4.5 Simulation Platform
 - **Configuration**: Extend the simulation platform to support 8 cores arranged in 2 clusters.

@@ -40,7 +40,7 @@
 
 ## Constitution Check
 
-- [ ] **Linux Text Standards**: LF line endings, files end with newline, UTF-8 encoding
+- [x] **Linux Text Standards**: LF line endings, files end with newline, UTF-8 encoding
 
 ## Project Structure
 
@@ -57,51 +57,23 @@ specs/[###-feature]/
 ```
 
 ### Source Code (repository root)
-<!--
-  ACTION REQUIRED: Replace the placeholder tree below with the concrete layout
-  for this feature. Delete unused options and expand the chosen structure with
-  real paths (e.g., apps/admin, packages/something). The delivered plan must
-  not include Option labels.
--->
-
 ```text
-# [REMOVE IF UNUSED] Option 1: Single project (DEFAULT)
 src/
-├── models/
-├── services/
-├── cli/
-└── lib/
+├── bootloader/          # Bootloader source code
+├── gem5/                # gem5 source code (submodule)
+├── zephyr/              # Zephyr RTOS source code (submodule)
+└── zephyr_apps/         # Zephyr applications
+    ├── hello_world/     # AMP Hello World app
+    ├── smp_hello/       # SMP Hello World app
+    └── smp_synchronization/ # SMP Synchronization workload
 
-tests/
-├── contract/
-├── integration/
-└── unit/
-
-# [REMOVE IF UNUSED] Option 2: Web application (when "frontend" + "backend" detected)
-backend/
-├── src/
-│   ├── models/
-│   ├── services/
-│   └── api/
-└── tests/
-
-frontend/
-├── src/
-│   ├── components/
-│   ├── pages/
-│   └── services/
-└── tests/
-
-# [REMOVE IF UNUSED] Option 3: Mobile + API (when "iOS/Android" detected)
-api/
-└── [same as backend above]
-
-ios/ or android/
-└── [platform-specific structure: feature modules, UI flows, platform tests]
+configs/
+└── riscv_rt/            # gem5 configuration scripts
+    ├── OctaHiFive.py    # Octa-Core Platform definition
+    └── fs_octa_hybrid.py # Octa-Core Simulation script
 ```
 
-**Structure Decision**: [Document the selected structure and reference the real
-directories captured above]
+**Structure Decision**: The project follows a monorepo-like structure where `gem5` and `zephyr` are submodules, and custom applications and configurations reside in `src/zephyr_apps` and `configs/riscv_rt` respectively.
 
 ## Complexity Tracking
 
