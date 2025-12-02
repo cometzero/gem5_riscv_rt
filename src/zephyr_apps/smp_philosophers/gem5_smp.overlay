@@ -1,0 +1,23 @@
+/ {
+	chosen {
+		zephyr,console = &uart4;
+		zephyr,shell-uart = &uart4;
+		zephyr,sram = &dtim;
+		zephyr,flash = &dtim;
+	};
+};
+
+&uart4 {
+    current-speed = <115200>;
+    clock-frequency = <100000000>;
+};
+
+&dtim {
+    reg = <0x90400000 0x400000>; /* 4MB Shared SRAM (Data) */
+};
+
+
+&flash0 {
+    compatible = "mmio-sram";
+    reg = <0x80000000 0x4000000>; /* 64MB Shared MRAM (Code) */
+};
