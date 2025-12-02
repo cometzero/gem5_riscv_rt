@@ -1,0 +1,3 @@
+config BOARD_GEM5_OCTA
+	bool "gem5 Octa-Core Board"
+	select SOC_SIFIVE_FREEDOM_FE310_G000

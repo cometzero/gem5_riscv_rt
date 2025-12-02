@@ -1,0 +1,15 @@
+if BOARD_GEM5_OCTA
+
+config BOARD
+	default "gem5_octa"
+
+config SYS_CLOCK_HW_CYCLES_PER_SEC
+	default 100000000
+
+config RISCV_HAS_CPU_IDLE
+	default y
+
+config NUM_IRQS
+	default 52
+
+endif # BOARD_GEM5_OCTA
