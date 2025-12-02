@@ -32,7 +32,7 @@
 ### Dependencies
 - **gem5**: Requires `QuadHiFive` extension to `OctaHiFive` (or similar).
 - **Zephyr**: Requires SMP support enabled for Cluster 1 kernel.
-- **Workload**: Zephyr `samples/synchronization` for SMP verification.
+- **Workload**: Zephyr `samples/philosophers` for SMP verification.
 
 ### Unknowns
 - **[NEEDS CLARIFICATION: gem5 Coherency]**: Does the Classic memory model in `fs_quad_amp.py` support snooping/coherency out-of-the-box for the SMP cluster, or do we need specific bus configuration?
@@ -65,7 +65,7 @@ src/
 └── zephyr_apps/         # Zephyr applications
     ├── hello_world/     # AMP Hello World app
     ├── smp_hello/       # SMP Hello World app
-    └── smp_synchronization/ # SMP Synchronization workload
+    └── smp_philosophers/ # SMP Dining Philosophers workload
 
 configs/
 └── riscv_rt/            # gem5 configuration scripts

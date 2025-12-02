@@ -14,14 +14,14 @@
 - [x] T007 [US1] Build Zephyr AMP Kernels for Cores 0-3
 - [x] T008 [US1] Build Zephyr SMP Kernel for Cluster 1 (Cores 4-7)
 - [x] T009 [US1] Compile updated bootloader
-- [ ] T010 [US1] Run Octa-Core Simulation with `fs_octa_hybrid.py`
-- [ ] T011 [US1] Verify independent output from Cores 0-3
-- [ ] T012 [US1] Verify unified SMP output from Cluster 1 (UART4)
+- [x] T010 [US1] Run Octa-Core Simulation with `fs_octa_hybrid.py`
+- [x] T011 [US1] Verify independent output from Cores 0-3
+- [x] T012 [US1] Verify unified SMP output from Cluster 1 (UART4)
 
-## Phase 4: User Story 2 (SMP Performance Analysis)
-- [ ] T013 [US2] Configure Zephyr Synchronization Sample as SMP workload
-- [ ] T014 [US2] Run Simulation with SMP workload
-- [ ] T015 [US2] Analyze `m5out/stats.txt` for cache coherency and performance metrics
+## Phase 4: User Story 2 (SMP Performance - Dining Philosophers)
+- [ ] T013 [US2] Configure Zephyr Dining Philosophers Sample `smp_philosophers`
+- [ ] T014 [US2] Run Simulation with Dining Philosophers workload
+- [ ] T015 [US2] Analyze `m5out/stats.txt` and terminal output for deadlock-free execution
 
 ## Dependencies
 - Phase 2 depends on Phase 1
@@ -30,4 +30,4 @@
 
 ## Implementation Strategy
 - **MVP**: Get all 8 cores booting "Hello World" (Phase 3).
-- **Refinement**: Run actual SMP synchronization workload (Phase 4).
+- **Refinement**: Run actual SMP Dining Philosophers workload (Phase 4).
