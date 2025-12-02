@@ -157,7 +157,7 @@ def create_system(args, kernels):
     # Use the 5th kernel argument for the SMP image
     smp_kernel = kernels[4] if len(kernels) > 4 else None
     
-    sram_c1, mram_c1 = memory.create_cluster_memory(1, system.membus, sram_base_c1, mram_base_c1, sram_size="4MB", mram_size="8MB", image_file=smp_kernel)
+    sram_c1, mram_c1 = memory.create_cluster_memory(1, system.membus, sram_base_c1, mram_base_c1, sram_size="4MB", mram_size="64MB", image_file=smp_kernel)
     system.c1_sram = sram_c1
     system.c1_mram = mram_c1
     system.mem_ranges.append(sram_c1.range)
