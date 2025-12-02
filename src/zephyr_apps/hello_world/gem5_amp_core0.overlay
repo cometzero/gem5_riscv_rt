@@ -14,23 +14,19 @@
     };
 };
 
-&uart0 {
-    compatible = "ns16550";
-    reg = <0x10010000 0x100>;
-    status = "okay";
-    current-speed = <115200>;
-    label = "UART_0";
-    reg-shift = <0>;
-    clock-frequency = <100000000>;
+/ {
+    soc {
+        uart0: serial@10010000 {
+            compatible = "ns16550";
+            reg = <0x10010000 0x100>;
+            status = "okay";
+            current-speed = <115200>;
+            label = "UART_0";
+            reg-shift = <0>;
+            clock-frequency = <100000000>;
+        };
+    };
 };
 
 
 
-&pwm0 { status = "disabled"; };
-&pwm1 { status = "disabled"; };
-&pwm2 { status = "disabled"; };
-&gpio0 { status = "disabled"; };
-&spi0 { status = "disabled"; };
-&spi1 { status = "disabled"; };
-&spi2 { status = "disabled"; };
-&wdog0 { status = "disabled"; };
